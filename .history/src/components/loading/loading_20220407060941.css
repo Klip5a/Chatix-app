@@ -1,0 +1,11 @@
+.loading-container{
+    z-index: 4;
+    height: 100vh;
+    width:100vw;
+    display:flex;
+    justify-content:center;
+    align-items: center;
+    background-color: rgba(104, 104, 104, 0.109);
+    position: absolute;
+    top: 0px;
+}
