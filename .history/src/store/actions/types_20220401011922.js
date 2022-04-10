@@ -1,2 +1,0 @@
-export const SIGNIN_REQUEST = 'SIGNIN_REQUEST'
-export const SIGNUP_REQUEST = 'SIGNUP_REQUEST'
