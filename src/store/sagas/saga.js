@@ -27,7 +27,7 @@ function* logOutSaga() {
   }
 }
 
-function* registerLocalSaga({ payload }) {
+function* signUnSaga({ payload }) {
   try {
     yield put(actions.loading(true));
     yield put(actions.authError(null));
@@ -61,6 +61,6 @@ function* loginSocial({ payload }) {
 export default function* authSaga() {
   yield all([takeLatest(actionTypes.SIGNIN_REQUEST, signInSaga)]);
   yield all([takeLatest(actionTypes.LOGOUT, logOutSaga)]);
-  yield all([takeLatest(actionTypes.SIGNUP_REQUEST, registerLocalSaga)]);
+  yield all([takeLatest(actionTypes.SIGNUP_REQUEST, signUnSaga)]);
   yield all([takeLatest(actionTypes.SOCIAL_LOGIN, loginSocial)]);
 }
