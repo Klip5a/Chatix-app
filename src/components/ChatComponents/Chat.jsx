@@ -14,6 +14,7 @@ const Chat = ({ user }) => {
   async function handleLogout() {
     dispatch(logOut());
   }
+
   return (
     <div className="flex">
       <Sidebar />
