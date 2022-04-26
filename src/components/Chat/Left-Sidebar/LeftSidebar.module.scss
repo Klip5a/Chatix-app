@@ -1,0 +1,234 @@
+.left-sidebar__wrapper {
+  min-width: 380px;
+  border-radius: 20px;
+  margin: 10px;
+  text-align: center;
+  @apply bg-white shadow-2xl;
+
+  .logo-wrapper {
+    margin-top: 40px;
+    span {
+      font-size: 48px;
+      font-weight: bold;
+      color: #000;
+    }
+  }
+
+  .search-dialog {
+    margin-top: 40px;
+    input {
+      height: 40px;
+      width: 319px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 5px 10px;
+      font-size: 14;
+      outline: none;
+      box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.116);
+
+      ::after {
+        // content: "/f002";
+        width: 20px;
+        height: 20px;
+        background: black;
+        display: block;
+      }
+      ::placeholder {
+        color: #9c9c9c;
+      }
+    }
+  }
+
+  .dialogs-wrapper {
+    margin: 10px 30px 40px;
+
+    .dialog-item {
+      // background: #fff;
+      border-radius: 20px;
+      padding: 10px 0;
+      margin-bottom: 20px;
+      color: #fff;
+      user-select: none;
+      @apply shadow-xl bg-blue-400;
+
+      &__wrapper {
+        padding: 0px 10px;
+        margin: 0 10px;
+        border-radius: 10px;
+        height: 60px;
+        cursor: pointer;
+        @apply flex items-center justify-between;
+
+        .dialog-item__logo {
+          width: 50px;
+          span {
+            font-size: 32px;
+            color: #fff;
+            i {
+              width: 50px;
+            }
+          }
+        }
+
+        .dialog-item__title {
+          font-size: 18px;
+          font-weight: 500;
+        }
+
+        .dialog-item__counter {
+          width: 40px;
+          height: 25px;
+          border-radius: 10px;
+          color: #000;
+          padding: 1px;
+          @apply bg-slate-300;
+        }
+      }
+
+      &__dialog {
+        display: none;
+      }
+
+      // &__wrapper-active {
+      //   .dialog-item__logo {
+      //     span {
+      //       color: rgb(92, 219, 92);
+      //     }
+      //   }
+      // }
+
+      // &__wrapper-completed {
+      //   .dialog-item__logo {
+      //     span {
+      //       color: rgb(129, 129, 129);
+      //     }
+      //   }
+      // }
+
+      // &__wrapper-saved {
+      //   .dialog-item__logo {
+      //     span {
+      //       color: rgb(66, 240, 240);
+      //     }
+      //   }
+      // }
+
+      &.active {
+        background-color: #fff;
+        box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.116);
+        .dialog-item__wrapper-active {
+          @apply bg-blue-400;
+        }
+        .user-list {
+          display: block;
+        }
+      }
+    }
+
+    .user-list__wrapper {
+      .user-list {
+        color: #000;
+        margin-right: 10px;
+        max-height: 350px;
+        display: none;
+        overflow: auto;
+        .user-item {
+          position: relative;
+          height: 75px;
+          margin: 10px 0 10px 10px;
+          padding: 10px 0;
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+          border-radius: 10px;
+          @apply border-blue-100 border-solid border-2;
+
+          &:hover {
+            transition: 0.3s ease-in-out;
+            @apply bg-blue-100;
+          }
+
+          &.active {
+            @apply bg-blue-100;
+          }
+
+          .user-title {
+            margin-left: 10px;
+            text-align: left;
+            span {
+              display: block;
+            }
+            .name {
+              font-weight: 600;
+            }
+          }
+          .dispatch-time {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+          }
+        }
+      }
+    }
+  }
+
+  .search-wrapper {
+    margin: 10px 30px;
+    // background: #fff;
+    border-radius: 20px;
+    padding: 10px 0;
+    width: 320px;
+    max-height: 670px;
+    @apply bg-blue-100;
+
+    .search-list-dialog {
+      color: #000;
+      margin-right: 10px;
+      max-height: 350px;
+      display: block;
+      overflow: auto;
+
+      .user-item {
+        background-color: #fff;
+        border-radius: 10px;
+        position: relative;
+        height: 75px;
+        margin-left: 10px;
+        padding: 10px 0;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+
+        .icon {
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 28px;
+          margin-left: 10px;
+          @apply text-blue-400;
+        }
+        .active-dialog_icon {
+          i {
+            color: rgb(92, 219, 92);
+          }
+        }
+        .user-title {
+          margin-left: 10px;
+          text-align: left;
+          span {
+            display: block;
+          }
+          .name {
+            font-weight: 600;
+          }
+        }
+        .dispatch-time {
+          position: absolute;
+          right: 5px;
+          top: 5px;
+        }
+      }
+    }
+  }
+}

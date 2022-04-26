@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import SignIn from './components/SignIn/SignIn';
 import SignUp from './components/SignUp/SignUp';
-import Chat from './components/ChatComponents/Chat';
+import Chat from './components/Chat/Chat';
 
 const App = () => {
   return (
