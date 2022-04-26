@@ -1,19 +1,16 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
-
+import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '../../store/actions/actions';
 import styles from './Chat.module.scss';
 import LeftSidebar from './Left-Sidebar/LeftSidebar';
 import profileImg from '../../assets/7819_Coll_Pepega.png';
 
-const Chat = ({ user }) => {
-  const { uid, email, username, dateOfBirth } = user;
+const Chat = () => {
+  const { user } = useSelector(({ auth }) => auth);
   const dispatch = useDispatch();
 
   async function handleLogout() {
-    dispatch(logOut());
+    await dispatch(logOut());
   }
 
   return (
@@ -22,14 +19,14 @@ const Chat = ({ user }) => {
       <div className={styles['chat-wrapper']}>
         <div className={styles['chat-header']}>
           <button
-            className="bg-blue-600 h-10 text-white rounded-md hover:bg-blue-700 text-xl"
+            className="bg-blue-600 h-10 text-white rounded-md text-xl"
             type="submit"
             onClick={handleLogout}
           >
             Log Out
           </button>
           <div className={styles['profile']}>
-            <span className={styles['profile-email']}>{email}</span>
+            <span className={styles['profile-email']}>{user.email}</span>
             <img src={profileImg} alt="Pepega.png" />
           </div>
         </div>
@@ -82,8 +79,8 @@ const Chat = ({ user }) => {
   );
 };
 
-Chat.propTypes = {
-  user: PropTypes.object
-};
+// Chat.propTypes = {
+//   user: PropTypes.object
+// };
 
-export default connect(({ auth }) => auth)(Chat);
+export default Chat;
