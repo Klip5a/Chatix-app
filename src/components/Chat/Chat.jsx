@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { logOut } from '../../store/actions/actions';
 import styles from './Chat.module.scss';
 import LeftSidebar from './Left-Sidebar/LeftSidebar';
@@ -82,5 +83,4 @@ const Chat = () => {
 // Chat.propTypes = {
 //   user: PropTypes.object
 // };
-
 export default Chat;
