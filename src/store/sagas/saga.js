@@ -1,4 +1,5 @@
 import { all, takeLatest, put, call } from 'redux-saga/effects';
+import { toast } from 'react-toastify';
 
 import actionTypes from '../actions/actionTypes';
 import * as actions from '../actions/actions';
@@ -10,7 +11,7 @@ function* signInSaga(data) {
     yield put(actions.authError(null));
     const userData = yield signIn(data.payload);
     yield put(actions.signInSuccess(userData));
-    alert('Вход выполнен!');
+    toast.success('Вход выполнен!');
   } catch (error) {
     yield put(actions.authError(error));
   }
@@ -21,7 +22,7 @@ function* logOutSaga() {
   try {
     yield logout();
     yield put(actions.logOutSuccess());
-    alert('Выход выполнен успешно!');
+    toast.success('Выход выполнен успешно!');
   } catch (error) {
     yield put(actions.authError(error.message));
   }
@@ -33,7 +34,7 @@ function* signUnSaga({ payload }) {
     yield put(actions.authError(null));
     let response = yield call(signUp, payload.data);
     yield put(actions.signInSuccess({ user: response }));
-    alert('Учетная запись успешно создана!');
+    toast.success('Учетная запись успешно создана!');
     if (payload.callback) {
       payload.callback();
     }
@@ -43,26 +44,26 @@ function* signUnSaga({ payload }) {
   yield put(actions.loading(false));
 }
 
-function* loginSocial({ payload }) {
-  try {
-    yield put(actions.loading(true));
-    yield put(actions.authError(null));
-    let response = yield call(socialSignIn, payload);
+// function* loginSocial({ payload }) {
+//   try {
+//     yield put(actions.loading(true));
+//     yield put(actions.authError(null));
+//     let response = yield call(socialSignIn, payload);
 
-    yield put(actions.signInSuccess({ user: response }));
-    alert('Вход выполнен!');
-  } catch (error) {
-    alert('Не удается войти, пожалуйста попробуйте еще раз!');
-    yield put(
-      actions.authError('Не удается войти, пожалуйста попробуйте еще раз !')
-    );
-  }
-  yield put(actions.loading(false));
-}
+//     yield put(actions.signInSuccess({ user: response }));
+//     toast.success('Вход выполнен!');
+//   } catch (error) {
+//     toast.error('Не удается войти, пожалуйста попробуйте еще раз!');
+//     yield put(
+//       actions.authError('Не удается войти, пожалуйста попробуйте еще раз !')
+//     );
+//   }
+//   yield put(actions.loading(false));
+// }
 
 export default function* authSaga() {
   yield all([takeLatest(actionTypes.SIGNIN_REQUEST, signInSaga)]);
   yield all([takeLatest(actionTypes.LOGOUT, logOutSaga)]);
   yield all([takeLatest(actionTypes.SIGNUP_REQUEST, signUnSaga)]);
-  yield all([takeLatest(actionTypes.SOCIAL_LOGIN, loginSocial)]);
+  // yield all([takeLatest(actionTypes.SOCIAL_LOGIN, loginSocial)]);
 }

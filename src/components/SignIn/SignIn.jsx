@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, Field } from 'formik';
+
 import * as Yup from 'yup';
 
 import { signInRequest } from '../../store/actions/actions';
@@ -10,10 +11,8 @@ import Loading from '../loading/loading';
 
 const SignIn = () => {
   const { loading, error, user } = useSelector(({ auth }) => auth);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   useEffect(() => {
     if (user) navigate('/chat');
   }, [user]);
@@ -28,14 +27,13 @@ const SignIn = () => {
   return (
     <div className={styles['chat-authorization__container']}>
       {loading && <Loading />}
-
       <div className={styles['chat-authorization__box'] + ' w-1/2'}>
         <div className={styles['left-box']}>
           <span>ChaTix</span>
         </div>
         <div className={styles['right-box']}>
+          {/* <div>{error && <div>{error}</div>}</div> */}
           <div className={styles['main-authorization__container']}>
-            <div>{error && <div>{error}</div>}</div>
             <Formik
               initialValues={{
                 email: '',

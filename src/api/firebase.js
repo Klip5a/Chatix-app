@@ -8,6 +8,8 @@ import {
   createUserWithEmailAndPassword,
   signOut
 } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
@@ -79,8 +81,19 @@ export const signIn = async ({ email, password }) => {
   try {
     const data = await signInWithEmailAndPassword(auth, email, password);
     return data;
-  } catch (error) {
-    throw error.message;
+  } catch (errors) {
+    // console.log(error.message)
+
+    throw toast.error('Ошибка почты или пароля', {
+      position: 'top-center',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined
+    });
+    // throw errors.message;
   }
 };
 
