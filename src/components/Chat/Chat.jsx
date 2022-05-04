@@ -10,8 +10,8 @@ const Chat = () => {
   const { user } = useSelector(({ auth }) => auth);
   const dispatch = useDispatch();
 
-  async function handleLogout() {
-    await dispatch(logOut());
+  function handleLogout() {
+    dispatch(logOut());
   }
 
   return (

@@ -1,9 +1,5 @@
 import React from 'react';
-<<<<<<< HEAD
-import Enzyme, { shallow, mount } from 'enzyme';
-=======
 import Enzyme, { mount } from 'enzyme';
->>>>>>> second-sprint
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
