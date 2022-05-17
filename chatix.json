@@ -1,0 +1,47 @@
+"status": "active",
+"operatorId": "123",
+"messages": {
+    "0": {
+        "writtenBy": "client",
+        "content": "Здравствуйте, я столкнулся с проблемой ...",
+        "timestamp": 123124123123132
+    },
+    "1": {
+      "writtenBy": "operator",
+      "content": "Здравствуйте, Иван Иванович. Сейчас вам поможем",
+      "timestamp": 12312412312323423
+    }
+}
+
+{
+  "dialogs": {
+    "221":{
+      "status":"active",
+      "clientName": "Антон",
+      "dialogId": "221",
+      "operatorId": "121",
+      "lastMsg": "Здравствуйте, Антон Антонович. Сейчас вам поможем"
+    },
+    "222":{
+      "status":"completed",
+      "clientName": "Иван",
+      "dialogId": "222",
+      "operatorId": "121",
+      "lastMsg": "Здравствуйте, Иван Иванович. Сейчас вам поможем"
+    },
+    "223":{
+      "status":"saved",
+      "clientName": "Иван",
+      "dialogId": "222",
+      "operatorId": "121",
+      "lastMsg": "Здравствуйте, Олег Олегович. Сейчас вам поможем"
+    }
+  },
+  "messages":{
+    "331":{
+      "1":{
+        
+      }
+    }
+  }
+}

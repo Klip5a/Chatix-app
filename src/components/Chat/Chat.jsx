@@ -1,22 +1,52 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { ref, get, query, onValue } from 'firebase/database';
 
+import { database } from '../../api/firebase';
 import { logOut } from '../../store/actions/actions';
 import styles from './Chat.module.scss';
-import LeftSidebar from './Left-Sidebar/LeftSidebar';
+import Sidebar from './Sidebar/Sidebar';
 import profileImg from '../../assets/7819_Coll_Pepega.png';
 
 const Chat = () => {
   const { user } = useSelector(({ auth }) => auth);
   const dispatch = useDispatch();
-
+  const [dialog, setDialog] = useState({});
+  const [message, setMessage] = useState([]);
+  const [operator, setOperator] = useState({});
+  const [showMessage, setShowMessage] = useState(false);
   function handleLogout() {
     dispatch(logOut());
   }
 
+  useEffect(() => {
+    viewOperator();
+  }, []);
+
+  const viewOperator = async () => {
+    const operatorRef = ref(database, 'operators/' + user.uid);
+    onValue(operatorRef, (snapshot) => {
+      setOperator(snapshot.val());
+    });
+  };
+
+  const selectDialog = async (dialogData) => {
+    setDialog(dialogData);
+    setShowMessage(true);
+    const msgRef = query(ref(database, 'messages/' + dialogData.dialogId));
+
+    get(msgRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        setMessage({ ...snapshot.val() });
+      } else {
+        console.log('No data available');
+      }
+    });
+  };
+
   return (
     <div className={styles['container']}>
-      <LeftSidebar />
+      <Sidebar dialogData={selectDialog} />
       <div className={styles['chat-wrapper']}>
         <div className={styles['chat-header']}>
           <button
@@ -34,53 +64,57 @@ const Chat = () => {
         <div className={styles['counter-search__wrapper']}>
           <div className={styles['client-queue']}>
             Клиентов в очереди: <span>10</span>
+            <button
+              className="bg-red-500 text-white ml-10"
+              onClick={() => setShowMessage(false)}
+            >
+              close dialog
+            </button>
           </div>
         </div>
         <div className={styles['chat-message']}>
-          <div className={styles['messages-wrapper']}>
-            <div className={styles['message'] + ' ' + styles['message-client']}>
-              <div className={styles['username']}>Андрей</div>
-              <p className={styles['text']}>Lorem ipsum</p>
-              <div className={styles['time-message']}>12:22</div>
-            </div>
-            <div className={styles['message'] + ' ' + styles['message-client']}>
-              <div className={styles['username']}>Андрей</div>
-              <p className={styles['text']}>Lorem ipsum</p>
-              <div className={styles['time-message']}>12:22</div>
-            </div>
-            <div
-              className={styles['message'] + ' ' + styles['message-operator']}
-            >
-              <span className={styles['username']}>Оператор Антон</span>
-              <p className={styles['text']}>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Placeat dicta, aspernatur, repudiandae explicabo, nobis
-                consequatur nihil optio velit voluptate facere perferendis vero
-                quibusdam laboriosam totam amet saepe veritatis expedita est.
-              </p>
-              <div className={styles['time-message']}>12:26</div>
-            </div>
-            <div
-              className={styles['message'] + ' ' + styles['message-operator']}
-            >
-              <span className={styles['username']}>Оператор Антон</span>
-              <p className={styles['text']}>Lorem</p>
-              <div className={styles['time-message']}>12:26</div>
-            </div>
-          </div>
-          <div className={styles['send-message']}>
-            <input type="text" placeholder="Сообщение" />
-            <button>
-              <i className="fa-solid fa-plus"></i>
-            </button>
-          </div>
+          {showMessage ? (
+            <>
+              <div className={styles['messages-wrapper']}>
+                {Object.keys(message).map((id) => {
+                  return (
+                    <div
+                      className={
+                        styles['message'] +
+                        ' ' +
+                        `${
+                          message[id].writtenBy === 'client'
+                            ? styles['message-client']
+                            : styles['message-operator']
+                        }`
+                      }
+                      key={id}
+                    >
+                      <div className={styles['username']}>
+                        {message[id].writtenBy === 'client'
+                          ? `Клиент ${dialog.clientName}`
+                          : `Оператор ${operator.name}`}
+                      </div>
+                      <p className={styles['text']}>{message[id].content}</p>
+                      <div className={styles['time-message']}>
+                        {message[id].timestamp}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className={styles['send-message']}>
+                <input type="text" placeholder="Сообщение" />
+                <button>
+                  <i className="fa-solid fa-plus"></i>
+                </button>
+              </div>
+            </>
+          ) : null}
         </div>
       </div>
     </div>
   );
 };
 
-// Chat.propTypes = {
-//   user: PropTypes.object
-// };
 export default Chat;

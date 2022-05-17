@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+// import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getDatabase, ref, set, onValue } from 'firebase/database';
 import { GoogleAuthProvider } from 'firebase/auth';
 import {
   getAuth,
@@ -10,6 +11,7 @@ import {
 } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { uid } from 'uid';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
@@ -24,7 +26,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
-const database = getFirestore(app);
+// const database = getFirestore(app);
+export const database = getDatabase(app);
 const googleProvider = new GoogleAuthProvider();
 
 const availabelProviders = {
@@ -55,7 +58,16 @@ export const socialSignIn = async (provider) => {
     throw err.message;
   }
 };
+// import { getDatabase, ref, set } from "firebase/database";
 
+// function writeUserData(userId, name, email, imageUrl) {
+//   const db = getDatabase();
+//   set(ref(db, 'users/' + userId), {
+//     username: name,
+//     email: email,
+//     profile_picture : imageUrl
+//   });
+// }
 export const signUp = async ({ email, password, username, dateOfBirth }) => {
   try {
     const { user } = await createUserWithEmailAndPassword(
@@ -64,11 +76,11 @@ export const signUp = async ({ email, password, username, dateOfBirth }) => {
       password
     );
 
-    const userData = await addDoc(collection(database, 'users/'), {
-      uid: user.uid,
-      email,
-      username,
-      dateOfBirth
+    const userData = await set(ref(database, 'operators/' + user.uid), {
+      operatopId: user.uid,
+      email: email,
+      username: username,
+      dateOfBirth: dateOfBirth
     });
 
     return userData;
@@ -81,7 +93,7 @@ export const signIn = async ({ email, password }) => {
   try {
     const data = await signInWithEmailAndPassword(auth, email, password);
     return data;
-  } catch (errors) {
+  } catch (error) {
     // console.log(error.message)
 
     throw toast.error('Ошибка почты или пароля', {
@@ -106,3 +118,48 @@ export const logout = () => {
       throw error.message;
     });
 };
+
+// export const getAllDialog = () => {
+//   try {
+//     const starCountRef = ref(database, 'dialogs/');
+//     onValue(starCountRef, (snapshot) => {
+//       const data = snapshot.val();
+//       if (data !== null) {
+//         Object.values(data).map((dialogs) => {
+
+//         })
+//       }
+//     });
+//   } catch (error) {
+//     throw error.message;
+//   }
+// };
+
+// function writeDialog() {
+//   const dialogId = uid();
+//   const data = {
+//     dialogId,
+//     status: 'completed',
+//     operatorId: '123',
+//     clientName: 'Вася',
+//     themeOfTheAppeal: 'Авто',
+//     subtopic: 'Porshe',
+//     messages: {
+//       0: {
+//         writtenBy: 'client',
+//         content: 'Здравствуйте, я столкнулся с проблемой ...',
+//         timestamp: 123124123123132
+//       },
+//       1: {
+//         writtenBy: 'operator',
+//         content: 'Здравствуйте, Иван Иванович. Сейчас вам поможем',
+//         timestamp: 12312412312323423
+//       }
+//     }
+//   };
+//   const reference = set(ref(database, 'dialogs/' + `${dialogId}`), data);
+
+//   return reference;
+// }
+
+// writeDialog();

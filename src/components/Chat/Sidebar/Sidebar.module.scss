@@ -89,34 +89,16 @@
         display: none;
       }
 
-      // &__wrapper-active {
-      //   .dialog-item__logo {
-      //     span {
-      //       color: rgb(92, 219, 92);
-      //     }
-      //   }
-      // }
-
-      // &__wrapper-completed {
-      //   .dialog-item__logo {
-      //     span {
-      //       color: rgb(129, 129, 129);
-      //     }
-      //   }
-      // }
-
-      // &__wrapper-saved {
-      //   .dialog-item__logo {
-      //     span {
-      //       color: rgb(66, 240, 240);
-      //     }
-      //   }
-      // }
-
       &.active {
         background-color: #fff;
         box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.116);
         .dialog-item__wrapper-active {
+          @apply bg-blue-400;
+        }
+        .dialog-item__wrapper-completed {
+          @apply bg-blue-400;
+        }
+        .dialog-item__wrapper-saved {
           @apply bg-blue-400;
         }
         .user-list {
