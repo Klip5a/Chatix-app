@@ -20,16 +20,26 @@ export const DialogList = (props) => {
   const [accordionCompletedDialog, setAccordionCompletedDialog] =
     useState(false);
   const [accordionSavedDialog, setAccordionSavedDialog] = useState(false);
-  const [dialog, setDialog] = useState({});
   const [countActiveDialog, setCountActiveDialog] = useState([]);
+  const [countCompletedDialog, setCountCompletedDialog] = useState([]);
+  const [countSavedDialog, setCountSavedDialog] = useState([]);
+  const [counterActDlgByOperator, setCounterActDlgByOperator] = useState('');
+  const [counterCmplDlgByOperator, setCounterCmplDlgByOperator] = useState('');
+  const [counterSvdDlgByOperator, setCounterSvdDlgByOperator] = useState('');
+  const [dialog, setDialog] = useState([]);
   const { selectDialog, operatorId } = props;
 
-  // const [count, setCount] = useState('');
-
   useEffect(() => {
-    // countDialog();
     getAllDialog();
-  }, []);
+    countDialogActiveDialog();
+    countDialogCompletedDialog();
+    countDialogSavedDialog();
+    setInterval(() => {
+      countActiveDialogByOperatorId();
+      countCompletedDialogByOperatorId();
+      countSavedDialogByOperatorId();
+    }, []);
+  }, [dialog]);
 
   const getAllDialog = async () => {
     const queryDialog = query(ref(database, 'dialogs/'));
@@ -41,6 +51,7 @@ export const DialogList = (props) => {
       }
     });
   };
+  // Accordion
   const activeAccordionDialog = () => {
     setAccordionActiveDialog(!accordionActiveDialog);
     if (accordionCompletedDialog === true) {
@@ -68,23 +79,75 @@ export const DialogList = (props) => {
       setAccordionCompletedDialog(!accordionCompletedDialog);
     }
   };
-  // const countDialog = async () => {
-  //   Object.keys(dialog).map((uid) => {
-  //     if (
-  //       dialog[uid].status == 'active' &&
-  //       dialog[uid].operatorId === operatorId
-  //     ) {
-  //       count++;
-  //       // console.log(counts)
-  //     }
-  //   });
-  //   // for (let key in dialog) {
-  //   //
-  //   // }
-  //   setCount(count);
-  //   clearInterval();
-  // };
-  // console.log(count);
+  //
+  // Count Dialog
+  const countDialogActiveDialog = async () => {
+    const queryDialog = query(
+      ref(database, 'dialogs/'),
+      orderByChild('status'),
+      equalTo('active')
+    );
+    get(queryDialog).then((snapshot) => {
+      if (snapshot.exists()) {
+        setCountActiveDialog(snapshot.val());
+      } else {
+        console.log('No data available');
+      }
+    });
+  };
+  const countActiveDialogByOperatorId = async () => {
+    Object.keys(countActiveDialog).map((uid) => {
+      if (countActiveDialog[uid].operatorId == operatorId) {
+        const count = Object.keys(countActiveDialog);
+        setCounterActDlgByOperator(count.length);
+      }
+    });
+  };
+
+  const countDialogCompletedDialog = async () => {
+    const queryDialog = query(
+      ref(database, 'dialogs/'),
+      orderByChild('status'),
+      equalTo('completed')
+    );
+    get(queryDialog).then((snapshot) => {
+      if (snapshot.exists()) {
+        setCountCompletedDialog(snapshot.val());
+      } else {
+        console.log('No data available');
+      }
+    });
+  };
+  const countCompletedDialogByOperatorId = async () => {
+    Object.keys(countCompletedDialog).map((uid) => {
+      if (countCompletedDialog[uid].operatorId == operatorId) {
+        const count = Object.keys(countCompletedDialog);
+        setCounterCmplDlgByOperator(count.length);
+      }
+    });
+  };
+  const countDialogSavedDialog = async () => {
+    const queryDialog = query(
+      ref(database, 'dialogs/'),
+      orderByChild('status'),
+      equalTo('saved')
+    );
+    get(queryDialog).then((snapshot) => {
+      if (snapshot.exists()) {
+        setCountSavedDialog(snapshot.val());
+      } else {
+        console.log('No data available');
+      }
+    });
+  };
+  const countSavedDialogByOperatorId = async () => {
+    Object.keys(countSavedDialog).map((uid) => {
+      if (countSavedDialog[uid].operatorId == operatorId) {
+        const count = Object.keys(countSavedDialog);
+        setCounterSvdDlgByOperator(count.length);
+      }
+    });
+  };
 
   return (
     <div className={styles['dialogs-wrapper']}>
@@ -113,7 +176,7 @@ export const DialogList = (props) => {
             <span>Активные</span>
           </div>
           <div className={styles['dialog-item__counter']}>
-            <span></span>
+            <span>{counterActDlgByOperator}</span>
           </div>
         </div>
 
@@ -180,14 +243,7 @@ export const DialogList = (props) => {
             <span>Завершенные</span>
           </div>
           <div className={styles['dialog-item__counter']}>
-            {Object.keys(dialog).map((uid) => {
-              if (
-                dialog[uid].status == 'completed' &&
-                dialog[uid].operatorId === operatorId
-              ) {
-                return <span>{[uid].length}</span>;
-              }
-            })}
+            {counterCmplDlgByOperator}
           </div>
         </div>
         <div className={styles['user-list__wrapper']}>
@@ -253,14 +309,7 @@ export const DialogList = (props) => {
             <span>Сохраненные</span>
           </div>
           <div className={styles['dialog-item__counter']}>
-            {/* {Object.keys(dialog).map((uid) => {
-              if (
-                dialog[uid].status == 'saved' &&
-                dialog[uid].operatorId === operatorId
-              ) {
-                return <span>{dialog.dialogId.length}</span>;
-              }
-            })} */}
+            {counterSvdDlgByOperator}
           </div>
         </div>
         <div className={styles['user-list__wrapper']}>
