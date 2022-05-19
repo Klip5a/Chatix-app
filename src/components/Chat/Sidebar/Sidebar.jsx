@@ -3,57 +3,41 @@ import PropTypes from 'prop-types';
 
 import styles from './Sidebar.module.scss';
 import DialogList from './DialogList/DialogList';
+import SearchInput from './SearchInput/SearchInpit';
+// import SearchList from './SearchList/SearchList';
 
 const Sidebar = (props) => {
   const [show, setShow] = useState(true);
-  const [textSearch, setTextSearch] = useState('');
-
-  const { dialogData } = props;
-
-  const searchDialog = (event) => {
-    setTextSearch(event.target.value);
-
-    const textSearchQuery = event.target.value;
-
-    if (textSearchQuery.length > 0) {
-      setShow(false);
-    } else {
-      setShow(true);
-    }
-  };
-
+  const [foundMessage, setFoundMessage] = useState({});
+  const { dialogData, operatorId } = props;
   return (
     <div className={styles['left-sidebar__wrapper']}>
       <div className={styles['logo-wrapper']}>
         <span>ChaTix</span>
       </div>
 
-      <div className={styles['search-dialog']}>
-        <input
-          type="text"
-          name="search"
-          placeholder="Поиск диалога"
-          onChange={searchDialog}
-        />
-      </div>
+      <SearchInput setShow={setShow} setQuery={setFoundMessage} />
 
       {show ? (
-        <DialogList selectDialog={dialogData} />
+        <DialogList selectDialog={dialogData} operatorId={operatorId} />
       ) : (
         <div className={styles['search-wrapper']}>
           <ul className={styles['search-list-dialog']}>
-            <li className={styles['user-item']}>
-              <div
-                className={styles['icon'] + ' ' + styles['active-dialog_icon']}
-              >
-                <i className="fa-regular fa-comment"></i>
-              </div>
-              <div className={styles['user-title']}>
-                <span className={styles['name']}>Andrey Golubev</span>
-                <span className={styles['theme']}>Тема: </span>
-              </div>
-              <div className={styles['dispatch-time']}>12:22</div>
-            </li>
+            {foundMessage.length > 0
+              ? foundMessage.map((item) => {
+                  return (
+                    <li className={styles['user-item']} key={item.id}>
+                      <div className={styles['user-title']}>
+                        <span className={styles['name']}>{item.writtenBy}</span>
+                        <span className={styles['theme']}>{item.content}</span>
+                      </div>
+                      <div className={styles['dispatch-time']}>
+                        {item.timestamp}
+                      </div>
+                    </li>
+                  );
+                })
+              : 'no message available'}
           </ul>
         </div>
       )}

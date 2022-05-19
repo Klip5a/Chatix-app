@@ -210,6 +210,10 @@
           right: 5px;
           top: 5px;
         }
+        
+      }
+      .user-item + .user-item{
+        margin-top: 20px;
       }
     }
   }

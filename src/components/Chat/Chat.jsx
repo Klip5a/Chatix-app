@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ref, get, query, onValue } from 'firebase/database';
+import PropTypes from 'prop-types';
 
 import { database } from '../../api/firebase';
 import { logOut } from '../../store/actions/actions';
@@ -15,6 +16,8 @@ const Chat = () => {
   const [message, setMessage] = useState([]);
   const [operator, setOperator] = useState({});
   const [showMessage, setShowMessage] = useState(false);
+  const operatorId = user.uid;
+
   function handleLogout() {
     dispatch(logOut());
   }
@@ -46,7 +49,7 @@ const Chat = () => {
 
   return (
     <div className={styles['container']}>
-      <Sidebar dialogData={selectDialog} />
+      <Sidebar dialogData={selectDialog} operatorId={operatorId} />
       <div className={styles['chat-wrapper']}>
         <div className={styles['chat-header']}>
           <button
@@ -74,10 +77,10 @@ const Chat = () => {
         </div>
         <div className={styles['chat-message']}>
           {showMessage ? (
-            <>
-              <div className={styles['messages-wrapper']}>
-                {Object.keys(message).map((id) => {
-                  return (
+            <div className={styles['messages-wrapper']}>
+              {Object.keys(message).map((id) => {
+                return (
+                  <>
                     <div
                       className={
                         styles['message'] +
@@ -100,21 +103,27 @@ const Chat = () => {
                         {message[id].timestamp}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-              <div className={styles['send-message']}>
-                <input type="text" placeholder="Сообщение" />
-                <button>
-                  <i className="fa-solid fa-plus"></i>
-                </button>
-              </div>
-            </>
+                    {dialog.status === 'active' ? (
+                      <div className={styles['send-message']}>
+                        <input type="text" placeholder="Сообщение" />
+                        <button>
+                          <i className="fa-solid fa-plus"></i>
+                        </button>
+                      </div>
+                    ) : null}
+                  </>
+                );
+              })}
+            </div>
           ) : null}
         </div>
       </div>
     </div>
   );
 };
+
+// Chat.propTypes = {
+//   operatorId: PropTypes.string.isRequired
+// };
 
 export default Chat;

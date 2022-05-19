@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ref, get, query } from 'firebase/database';
+import {
+  ref,
+  get,
+  query,
+  startAt,
+  orderByChild,
+  endAt,
+  onValue,
+  onChildAdded,
+  equalTo
+} from 'firebase/database';
 
 import styles from '../Sidebar.module.scss';
 import { database } from '../../../../api/firebase';
@@ -10,10 +20,14 @@ export const DialogList = (props) => {
   const [accordionCompletedDialog, setAccordionCompletedDialog] =
     useState(false);
   const [accordionSavedDialog, setAccordionSavedDialog] = useState(false);
-  const { selectDialog } = props;
   const [dialog, setDialog] = useState({});
+  const [countActiveDialog, setCountActiveDialog] = useState([]);
+  const { selectDialog, operatorId } = props;
+
+  // const [count, setCount] = useState('');
 
   useEffect(() => {
+    // countDialog();
     getAllDialog();
   }, []);
 
@@ -27,7 +41,6 @@ export const DialogList = (props) => {
       }
     });
   };
-
   const activeAccordionDialog = () => {
     setAccordionActiveDialog(!accordionActiveDialog);
     if (accordionCompletedDialog === true) {
@@ -55,6 +68,23 @@ export const DialogList = (props) => {
       setAccordionCompletedDialog(!accordionCompletedDialog);
     }
   };
+  // const countDialog = async () => {
+  //   Object.keys(dialog).map((uid) => {
+  //     if (
+  //       dialog[uid].status == 'active' &&
+  //       dialog[uid].operatorId === operatorId
+  //     ) {
+  //       count++;
+  //       // console.log(counts)
+  //     }
+  //   });
+  //   // for (let key in dialog) {
+  //   //
+  //   // }
+  //   setCount(count);
+  //   clearInterval();
+  // };
+  // console.log(count);
 
   return (
     <div className={styles['dialogs-wrapper']}>
@@ -83,14 +113,17 @@ export const DialogList = (props) => {
             <span>Активные</span>
           </div>
           <div className={styles['dialog-item__counter']}>
-            <span>12</span>
+            <span></span>
           </div>
         </div>
 
         <div className={styles['user-list__wrapper']}>
           <ul className={styles['user-list']}>
             {Object.keys(dialog).map((uid) => {
-              if (dialog[uid].status == 'active') {
+              if (
+                dialog[uid].status == 'active' &&
+                dialog[uid].operatorId === operatorId
+              ) {
                 return (
                   <li
                     className={styles['user-item']}
@@ -110,9 +143,9 @@ export const DialogList = (props) => {
                         </span>
                       </div>
                     </div>
-                    {/* <div className={styles['dispatch-time']}>
-          {activeDialog[uid].timestamp}
-          </div> */}
+                    <div className={styles['dispatch-time']}>
+                      {dialog[uid].lastActivity}
+                    </div>
                   </li>
                 );
               }
@@ -129,7 +162,6 @@ export const DialogList = (props) => {
           ' ' +
           styles[accordionCompletedDialog ? 'active' : '']
         }
-        onClick={completedAccordionDialog}
       >
         <div
           className={
@@ -137,6 +169,7 @@ export const DialogList = (props) => {
             ' ' +
             styles['dialog-item__wrapper-completed']
           }
+          onClick={completedAccordionDialog}
         >
           <div className={styles['dialog-item__logo']}>
             <span>
@@ -147,13 +180,23 @@ export const DialogList = (props) => {
             <span>Завершенные</span>
           </div>
           <div className={styles['dialog-item__counter']}>
-            <span>12</span>
+            {Object.keys(dialog).map((uid) => {
+              if (
+                dialog[uid].status == 'completed' &&
+                dialog[uid].operatorId === operatorId
+              ) {
+                return <span>{[uid].length}</span>;
+              }
+            })}
           </div>
         </div>
         <div className={styles['user-list__wrapper']}>
           <ul className={styles['user-list']}>
             {Object.keys(dialog).map((uid) => {
-              if (dialog[uid].status == 'completed') {
+              if (
+                dialog[uid].status == 'completed' &&
+                dialog[uid].operatorId === operatorId
+              ) {
                 return (
                   <li
                     className={styles['user-item']}
@@ -192,7 +235,6 @@ export const DialogList = (props) => {
           ' ' +
           styles[accordionSavedDialog ? 'active' : '']
         }
-        onClick={savedAccordionDialog}
       >
         <div
           className={
@@ -200,6 +242,7 @@ export const DialogList = (props) => {
             ' ' +
             styles['dialog-item__wrapper-saved']
           }
+          onClick={savedAccordionDialog}
         >
           <div className={styles['dialog-item__logo']}>
             <span>
@@ -210,13 +253,23 @@ export const DialogList = (props) => {
             <span>Сохраненные</span>
           </div>
           <div className={styles['dialog-item__counter']}>
-            <span>12</span>
+            {/* {Object.keys(dialog).map((uid) => {
+              if (
+                dialog[uid].status == 'saved' &&
+                dialog[uid].operatorId === operatorId
+              ) {
+                return <span>{dialog.dialogId.length}</span>;
+              }
+            })} */}
           </div>
         </div>
         <div className={styles['user-list__wrapper']}>
           <ul className={styles['user-list']}>
             {Object.keys(dialog).map((uid) => {
-              if (dialog[uid].status == 'saved') {
+              if (
+                dialog[uid].status == 'saved' &&
+                dialog[uid].operatorId === operatorId
+              ) {
                 return (
                   <li
                     className={styles['user-item']}
