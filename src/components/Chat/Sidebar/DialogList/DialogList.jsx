@@ -9,7 +9,8 @@ import {
   endAt,
   onValue,
   onChildAdded,
-  equalTo
+  equalTo,
+  update
 } from 'firebase/database';
 
 import styles from '../Sidebar.module.scss';
@@ -103,7 +104,6 @@ export const DialogList = (props) => {
       }
     });
   };
-
   const countDialogCompletedDialog = async () => {
     const queryDialog = query(
       ref(database, 'dialogs/'),
@@ -148,7 +148,16 @@ export const DialogList = (props) => {
       }
     });
   };
-
+  //
+  const saveDialog = async (event) => {
+    update(ref(database, 'dialogs/' + event.dialogId), {
+      status: 'saved'
+    }).then(
+      alert('dialog has saved').catch((error) => {
+        alert('there was an error saving dialog, details: ' + error.message);
+      })
+    );
+  };
   return (
     <div className={styles['dialogs-wrapper']}>
       {/* Активные */}
@@ -264,7 +273,10 @@ export const DialogList = (props) => {
                         {dialog[uid].lastActivity}
                       </div>
                     </div>
-                    <button className={styles['btn-save']}>
+                    <button
+                      className={styles['btn-save']}
+                      onClick={() => saveDialog(dialog[uid])}
+                    >
                       <i className="fa-solid fa-floppy-disk"></i>
                     </button>
                   </li>
