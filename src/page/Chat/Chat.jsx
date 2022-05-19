@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ref, get, query, onValue } from 'firebase/database';
-import PropTypes from 'prop-types';
+import {
+  ref,
+  set,
+  get,
+  query,
+  onValue,
+  serverTimestamp
+} from 'firebase/database';
 
 import { database } from '../../api/firebase';
 import { logOut } from '../../store/actions/actions';
 import styles from './Chat.module.scss';
-import Sidebar from './Sidebar/Sidebar';
+import Sidebar from '../../components/Sidebar/Sidebar';
 import profileImg from '../../assets/7819_Coll_Pepega.png';
 
 const Chat = () => {
@@ -16,6 +22,7 @@ const Chat = () => {
   const [message, setMessage] = useState([]);
   const [operator, setOperator] = useState({});
   const [showMessage, setShowMessage] = useState(false);
+  const [text, setText] = useState('');
   const operatorId = user.uid;
 
   function handleLogout() {
@@ -45,6 +52,19 @@ const Chat = () => {
         console.log('No data available');
       }
     });
+  };
+
+  const handleSendMessage = async (event) => {
+    event.preventDefault();
+    setText(event.target.value);
+    const msgArr = Object.keys(message);
+    const id = msgArr.length + 1;
+    const data = {
+      writtenBy: 'operator',
+      content: text,
+      timestamp: serverTimestamp(new Date())
+    };
+    await set(ref(database, 'messages/' + dialog.dialogId + id), data);
   };
 
   return (
@@ -104,11 +124,20 @@ const Chat = () => {
                       </div>
                     </div>
                     {dialog.status === 'active' ? (
-                      <div className={styles['send-message']}>
-                        <input type="text" placeholder="Сообщение" />
-                        <button>
-                          <i className="fa-solid fa-plus"></i>
-                        </button>
+                      <div>
+                        <form
+                          className={styles['send-message']}
+                          onSubmit={handleSendMessage}
+                        >
+                          <input
+                            type="text"
+                            placeholder="Сообщение"
+                            value={text}
+                          />
+                          <button>
+                            <i className="fa-solid fa-plus"></i>
+                          </button>
+                        </form>
                       </div>
                     ) : null}
                   </>

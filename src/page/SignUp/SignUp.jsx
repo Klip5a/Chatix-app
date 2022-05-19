@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 
 import { signUpRequest } from '../../store/actions/actions';
 import styles from './../SignIn/auth.module.scss';
-import Loading from '../loading/loading';
+import Loading from '../../components/loading/loading';
 
 const SignUp = () => {
   const { loading, error } = useSelector(({ auth }) => auth);

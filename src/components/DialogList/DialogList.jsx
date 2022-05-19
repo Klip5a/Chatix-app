@@ -13,8 +13,8 @@ import {
   update
 } from 'firebase/database';
 
-import styles from '../Sidebar.module.scss';
-import { database } from '../../../../api/firebase';
+import styles from './DialogList.module.scss';
+import { database } from '../../api/firebase';
 
 export const DialogList = (props) => {
   const [accordionActiveDialog, setAccordionActiveDialog] = useState(false);
@@ -114,7 +114,8 @@ export const DialogList = (props) => {
       if (snapshot.exists()) {
         setCountCompletedDialog(snapshot.val());
       } else {
-        console.log('No data available');
+        // setCountCompletedDialog(0)
+        // console.log('No data available');
       }
     });
   };

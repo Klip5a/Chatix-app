@@ -135,31 +135,38 @@ export const logout = () => {
 //   }
 // };
 
+// const dialogId = uid();
 // function writeDialog() {
-//   const dialogId = uid();
 //   const data = {
-//     dialogId,
-//     status: 'completed',
-//     operatorId: '123',
-//     clientName: 'Вася',
+//     dialogId: dialogId,
+//     status: 'active',
+//     lastActivity: 123,
+//     lastMessage: 'qweqweqwe',
+//     clientName: 'Гоша',
+//     operatorId: 'dLrx3J0UZsTrwoRSY2I6O0NpeTG2',
 //     themeOfTheAppeal: 'Авто',
-//     subtopic: 'Porshe',
-//     messages: {
-//       0: {
-//         writtenBy: 'client',
-//         content: 'Здравствуйте, я столкнулся с проблемой ...',
-//         timestamp: 123124123123132
-//       },
-//       1: {
-//         writtenBy: 'operator',
-//         content: 'Здравствуйте, Иван Иванович. Сейчас вам поможем',
-//         timestamp: 12312412312323423
-//       }
-//     }
+//     subtopic: 'Porshe'
 //   };
 //   const reference = set(ref(database, 'dialogs/' + `${dialogId}`), data);
 
 //   return reference;
 // }
+// function writeMessage() {
+//   const data = {
+//     0: {
+//       content: 'Здравствуйте, я столкнулся с проблемой ...',
+//       timestamp: '111',
+//       writtenBy: 'client'
+//     },
+//     1: {
+//       content: 'Здарова, Георгий. Сейчас вам поможем',
+//       timestamp: 124,
+//       writtenBy: 'operator'
+//     }
+//   };
+//   const reference = set(ref(database, 'messages/' + `${dialogId}`), data);
 
+//   return reference;
+// }
+// writeMessage();
 // writeDialog();

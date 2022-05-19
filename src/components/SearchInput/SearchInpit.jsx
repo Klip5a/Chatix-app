@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import debounce from 'lodash.debounce';
 
-import styles from '../Sidebar.module.scss';
+import styles from './SearchInput.module.scss';
 
 const SearchInput = ({ setShow, setQuery }) => {
   const messagesData = [

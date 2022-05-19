@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import styles from './Sidebar.module.scss';
-import DialogList from './DialogList/DialogList';
-import SearchInput from './SearchInput/SearchInpit';
-// import SearchList from './SearchList/SearchList';
+import DialogList from '../DialogList/DialogList';
+import SearchInput from '../SearchInput/SearchInpit';
 
 const Sidebar = (props) => {
   const [show, setShow] = useState(true);
