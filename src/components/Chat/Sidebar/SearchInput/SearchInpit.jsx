@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import debounce from 'lodash.debounce';
 
 import styles from '../Sidebar.module.scss';
 
@@ -52,7 +53,8 @@ const SearchInput = ({ setShow, setQuery }) => {
       const newContactList = Object.values(messagesData).filter((message) =>
         message.content.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setQuery(newContactList);
+      const debounceSearch = debounce(() => setQuery(newContactList), 500);
+      debounceSearch();
       setShow(false); // dialog list hidden
     } else {
       setShow(true); // dialog list show

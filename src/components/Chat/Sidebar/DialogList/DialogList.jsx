@@ -193,21 +193,16 @@ export const DialogList = (props) => {
                     key={uid}
                     onClick={() => selectDialog(dialog[uid])}
                   >
-                    <div className={styles['user-title']}>
-                      <span className={styles['name']}>
+                    <div className={styles['uset-item__content']}>
+                      <div className={styles['name']}>
                         {dialog[uid].clientName}
-                      </span>
-                      <div className="justify-around flex">
-                        <span className={styles['theme']}>
-                          Тема: {dialog[uid].themeOfTheAppeal}
-                        </span>
-                        <span className={styles['theme']}>
-                          Подтема: {dialog[uid].subtopic}
-                        </span>
                       </div>
-                    </div>
-                    <div className={styles['dispatch-time']}>
-                      {dialog[uid].lastActivity}
+                      <div className={styles['message']}>
+                        {dialog[uid].lastMessage}
+                      </div>
+                      <div className={styles['dispatch-time']}>
+                        {dialog[uid].lastActivity}
+                      </div>
                     </div>
                   </li>
                 );
@@ -254,27 +249,24 @@ export const DialogList = (props) => {
                 dialog[uid].operatorId === operatorId
               ) {
                 return (
-                  <li
-                    className={styles['user-item']}
-                    key={uid}
-                    onClick={() => selectDialog(dialog[uid])}
-                  >
-                    <div className={styles['user-title']}>
-                      <span className={styles['name']}>
+                  <li className={styles['user-item']} key={uid}>
+                    <div
+                      className={styles['uset-item__content']}
+                      onClick={() => selectDialog(dialog[uid])}
+                    >
+                      <div className={styles['name']}>
                         {dialog[uid].clientName}
-                      </span>
-                      <div className="justify-around flex">
-                        <span className={styles['theme']}>
-                          Тема: {dialog[uid].themeOfTheAppeal}
-                        </span>
-                        <span className={styles['theme']}>
-                          Подтема: {dialog[uid].subtopic}
-                        </span>
+                      </div>
+                      <div className={styles['message']}>
+                        {dialog[uid].lastMessage}
+                      </div>
+                      <div className={styles['dispatch-time']}>
+                        {dialog[uid].lastActivity}
                       </div>
                     </div>
-                    {/* <div className={styles['dispatch-time']}>
-          {activeDialog[uid].timestamp}
-          </div> */}
+                    <button className={styles['btn-save']}>
+                      <i className="fa-solid fa-floppy-disk"></i>
+                    </button>
                   </li>
                 );
               }
@@ -320,27 +312,24 @@ export const DialogList = (props) => {
                 dialog[uid].operatorId === operatorId
               ) {
                 return (
-                  <li
-                    className={styles['user-item']}
-                    key={uid}
-                    onClick={() => selectDialog(dialog[uid])}
-                  >
-                    <div className={styles['user-title']}>
-                      <span className={styles['name']}>
+                  <li className={styles['user-item']} key={uid}>
+                    <div
+                      className={styles['uset-item__content']}
+                      onClick={() => selectDialog(dialog[uid])}
+                    >
+                      <div className={styles['name']}>
                         {dialog[uid].clientName}
-                      </span>
-                      <div className="justify-around flex">
-                        <span className={styles['theme']}>
-                          Тема: {dialog[uid].themeOfTheAppeal}
-                        </span>
-                        <span className={styles['theme']}>
-                          Подтема: {dialog[uid].subtopic}
-                        </span>
+                      </div>
+                      <div className={styles['message']}>
+                        {dialog[uid].lastMessage}
+                      </div>
+                      <div className={styles['dispatch-time']}>
+                        {dialog[uid].lastActivity}
                       </div>
                     </div>
-                    {/* <div className={styles['dispatch-time']}>
-          {activeDialog[uid].timestamp}
-          </div> */}
+                    <button className={styles['btn-delete']}>
+                      <i className="fa-solid fa-trash-can"></i>
+                    </button>
                   </li>
                 );
               }
