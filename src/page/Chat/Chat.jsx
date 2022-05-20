@@ -13,6 +13,7 @@ import profileImg from '../../assets/7819_Coll_Pepega.png';
 import MessageForm from '../../components/MessageForm/MessageForm';
 import Message from '../../components/Message/Message';
 import { toast } from 'react-toastify';
+import DialogListQueue from '../../components/DialogListQueue/DialogListQueue';
 
 const Chat = () => {
   const { user } = useSelector(({ auth }) => auth);
@@ -21,6 +22,7 @@ const Chat = () => {
   const [message, setMessage] = useState([]);
   const [operator, setOperator] = useState({});
   const [showMessage, setShowMessage] = useState(false);
+  const [countQueueDialog, setCountQueueDialog] = useState([]);
   const [text, setText] = useState('');
   const operatorId = user.uid;
 
@@ -108,12 +110,14 @@ const Chat = () => {
           </div>
         </div>
         <div className={styles['counter-search__wrapper']}>
-          <div className={styles['client-queue']}>
-            Клиентов в очереди: <span>10</span>
-          </div>
+          {!showMessage ? (
+            <div className={styles['client-queue']}>
+              Клиентов в очереди: <span>{countQueueDialog.length}</span>
+            </div>
+          ) : null}
           {showMessage ? (
             <button
-              className="bg-blue-100 text-black p-2 rounded-xl"
+              className="bg-blue-100 text-black p-2 rounded-xl w-full"
               onClick={() => setShowMessage(false)}
             >
               Закрыть диалог
@@ -134,7 +138,6 @@ const Chat = () => {
                     <Message
                       key={id}
                       clientName={dialog.clientName}
-                      operatorName={operator.name}
                       writtenBy={message[id].writtenBy}
                       content={message[id].content}
                       timestamp={message[id].timestamp}
@@ -150,7 +153,12 @@ const Chat = () => {
                 />
               ) : null}
             </div>
-          ) : null}
+          ) : (
+            <DialogListQueue
+              operatorId={operatorId}
+              setCountQueueDialog={setCountQueueDialog}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { ref, get, query, update } from 'firebase/database';
+import {
+  ref,
+  get,
+  query,
+  update,
+  orderByChild,
+  equalTo
+} from 'firebase/database';
 
 import styles from './SidebarDialogList.module.scss';
 import { database } from '../../api/firebase';
@@ -22,15 +29,20 @@ const SidebarDialogList = (props) => {
 
   useEffect(() => {
     getAllDialog();
-    // countDialogActiveDialog();
-    // countDialogCompletedDialog();
-    // countDialogSavedDialog();
+    countDialogActiveDialog();
+    countDialogCompletedDialog();
+    countDialogSavedDialog();
     // setInterval(() => {
-    //   countActiveDialogByOperatorId();
-    //   countCompletedDialogByOperatorId();
-    //   countSavedDialogByOperatorId();
+    countActiveDialogByOperatorId();
+    countCompletedDialogByOperatorId();
+    countSavedDialogByOperatorId();
     // }, []);
-  }, [dialog]);
+  }, [
+    dialog,
+    counterActDlgByOperator,
+    counterCmplDlgByOperator,
+    counterSvdDlgByOperator
+  ]);
 
   const getAllDialog = async () => {
     const queryDialog = query(ref(database, 'dialogs/'));
@@ -42,6 +54,7 @@ const SidebarDialogList = (props) => {
       }
     });
   };
+
   // Accordion
   const activeAccordionDialog = () => {
     setAccordionActiveDialog(!accordionActiveDialog);
@@ -70,82 +83,84 @@ const SidebarDialogList = (props) => {
       setAccordionCompletedDialog(!accordionCompletedDialog);
     }
   };
-  //
+
   // Count Dialog
-  // const countDialogActiveDialog = async () => {
-  //   const queryDialog = query(
-  //     ref(database, 'dialogs/'),
-  //     orderByChild('status'),
-  //     equalTo('active')
-  //   );
-  //   get(queryDialog).then((snapshot) => {
-  //     if (snapshot.exists()) {
-  //       setCountActiveDialog(snapshot.val());
-  //     } else {
-  //       console.log('No data available');
-  //     }
-  //   });
-  // };
-  // const countActiveDialogByOperatorId = async () => {
-  //   Object.keys(countActiveDialog).map((uid) => {
-  //     if (countActiveDialog[uid].operatorId == operatorId) {
-  //       const count = Object.keys(countActiveDialog);
-  //       setCounterActDlgByOperator(count.length);
-  //     }
-  //   });
-  // };
-  // const countDialogCompletedDialog = async () => {
-  //   const queryDialog = query(
-  //     ref(database, 'dialogs/'),
-  //     orderByChild('status'),
-  //     equalTo('completed')
-  //   );
-  //   get(queryDialog).then((snapshot) => {
-  //     if (snapshot.exists()) {
-  //       setCountCompletedDialog(snapshot.val());
-  //     } else {
-  //       // setCountCompletedDialog(0)
-  //       // console.log('No data available');
-  //     }
-  //   });
-  // };
-  // const countCompletedDialogByOperatorId = async () => {
-  //   Object.keys(countCompletedDialog).map((uid) => {
-  //     if (countCompletedDialog[uid].operatorId == operatorId) {
-  //       const count = Object.keys(countCompletedDialog);
-  //       setCounterCmplDlgByOperator(count.length);
-  //     }
-  //   });
-  // };
-  // const countDialogSavedDialog = async () => {
-  //   const queryDialog = query(
-  //     ref(database, 'dialogs/'),
-  //     orderByChild('status'),
-  //     equalTo('saved')
-  //   );
-  //   get(queryDialog).then((snapshot) => {
-  //     if (snapshot.exists()) {
-  //       setCountSavedDialog(snapshot.val());
-  //     } else {
-  //       console.log('No data available');
-  //     }
-  //   });
-  // };
-  // const countSavedDialogByOperatorId = async () => {
-  //   Object.keys(countSavedDialog).map((uid) => {
-  //     if (countSavedDialog[uid].operatorId == operatorId) {
-  //       const count = Object.keys(countSavedDialog);
-  //       setCounterSvdDlgByOperator(count.length);
-  //     }
-  //   });
-  // };
-  //
+  const countDialogActiveDialog = async () => {
+    const queryDialog = query(
+      ref(database, 'dialogs/'),
+      orderByChild('status'),
+      equalTo('active')
+    );
+    get(queryDialog).then((snapshot) => {
+      if (snapshot.exists()) {
+        setCountActiveDialog(snapshot.val());
+      } else {
+        console.log('No data available');
+      }
+    });
+  };
+  const countActiveDialogByOperatorId = async () => {
+    Object.keys(countActiveDialog).map((uid) => {
+      if (countActiveDialog[uid].operatorId == operatorId) {
+        const count = Object.keys(countActiveDialog);
+        setCounterActDlgByOperator(count.length);
+      }
+    });
+  };
+  const countDialogCompletedDialog = async () => {
+    const queryDialog = query(
+      ref(database, 'dialogs/'),
+      orderByChild('status'),
+      equalTo('completed')
+    );
+    get(queryDialog).then((snapshot) => {
+      if (snapshot.exists()) {
+        setCountCompletedDialog(snapshot.val());
+      }
+    });
+  };
+  const countCompletedDialogByOperatorId = async () => {
+    Object.keys(countCompletedDialog).map((uid) => {
+      if (countCompletedDialog[uid].operatorId == operatorId) {
+        const count = Object.keys(countCompletedDialog);
+        setCounterCmplDlgByOperator(count.length);
+      }
+    });
+  };
+  const countDialogSavedDialog = async () => {
+    const queryDialog = query(
+      ref(database, 'dialogs/'),
+      orderByChild('status'),
+      equalTo('saved')
+    );
+    get(queryDialog).then((snapshot) => {
+      if (snapshot.exists()) {
+        setCountSavedDialog(snapshot.val());
+      }
+    });
+  };
+  const countSavedDialogByOperatorId = async () => {
+    Object.keys(countSavedDialog).map((uid) => {
+      if (countSavedDialog[uid].operatorId == operatorId) {
+        const count = Object.keys(countSavedDialog);
+        setCounterSvdDlgByOperator(count.length);
+      }
+    });
+  };
+
+  // Btn Save Dialog
   const saveDialog = async (event) => {
     await update(ref(database, 'dialogs/' + event.dialogId), {
       status: 'saved'
     }).then(
-      alert('dialog has saved').catch((error) => {
-        alert('there was an error saving dialog, details: ' + error.message);
+      toast.success('🦄 Диалог сохранен!', {
+        position: 'bottom-right',
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined
       })
     );
   };
@@ -177,7 +192,7 @@ const SidebarDialogList = (props) => {
             <span>Активные</span>
           </div>
           <div className={styles['dialog-item__counter']}>
-            {/* <span>{counterActDlgByOperator}</span> */}
+            <span>{counterActDlgByOperator}</span>
           </div>
         </div>
 
@@ -237,7 +252,7 @@ const SidebarDialogList = (props) => {
             <span>Завершенные</span>
           </div>
           <div className={styles['dialog-item__counter']}>
-            {/* {counterCmplDlgByOperator} */}
+            {counterCmplDlgByOperator}
           </div>
         </div>
         <div className={styles['user-list__wrapper']}>
@@ -301,7 +316,7 @@ const SidebarDialogList = (props) => {
             <span>Сохраненные</span>
           </div>
           <div className={styles['dialog-item__counter']}>
-            {/* {counterSvdDlgByOperator} */}
+            {counterSvdDlgByOperator}
           </div>
         </div>
         <div className={styles['user-list__wrapper']}>

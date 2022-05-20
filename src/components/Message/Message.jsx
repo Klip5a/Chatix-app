@@ -4,13 +4,7 @@ import moment from 'moment';
 
 import styles from '../../page/Chat/Chat.module.scss';
 
-const Message = ({
-  writtenBy,
-  operatorName,
-  clientName,
-  content,
-  timestamp
-}) => {
+const Message = ({ writtenBy, clientName, content, timestamp }) => {
   const scrollRef = useRef();
 
   useEffect(() => {
@@ -30,9 +24,7 @@ const Message = ({
       ref={scrollRef}
     >
       <div className={styles['username']}>
-        {writtenBy === 'client'
-          ? `Клиент ${clientName}`
-          : `Оператор ${operatorName}`}
+        {writtenBy === 'client' ? `Клиент ${clientName}` : 'Вы'}
       </div>
       <p className={styles['text']}>{content}</p>
       <div className={styles['time-message']}>
@@ -47,7 +39,7 @@ Message.propTypes = {
   operatorName: PropTypes.string,
   clientName: PropTypes.string,
   content: PropTypes.string,
-  timestamp: PropTypes.number
+  timestamp: PropTypes.string
 };
 
 export default Message;

@@ -11,7 +11,15 @@ function* signInSaga(data) {
     yield put(actions.authError(null));
     const userData = yield signIn(data.payload);
     yield put(actions.signInSuccess(userData));
-    toast.success('Вход выполнен!');
+    toast.success('🦄 Вход выполнен!', {
+      position: 'top-left',
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined
+    });
   } catch (error) {
     yield put(actions.authError(error));
   }
@@ -22,7 +30,15 @@ function* logOutSaga() {
   try {
     yield logout();
     yield put(actions.logOutSuccess());
-    toast.success('Выход выполнен успешно!');
+    toast.success('🦄 Выход выполнен успешно!', {
+      position: 'top-left',
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined
+    });
   } catch (error) {
     yield put(actions.authError(error.message));
   }
@@ -34,7 +50,15 @@ function* signUnSaga({ payload }) {
     yield put(actions.authError(null));
     let response = yield call(signUp, payload.data);
     yield put(actions.signInSuccess({ user: response }));
-    toast.success('Учетная запись успешно создана!');
+    toast.success('🦄 Учетная запись успешно создана!', {
+      position: 'top-left',
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined
+    });
     if (payload.callback) {
       payload.callback();
     }

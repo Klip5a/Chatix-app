@@ -139,7 +139,7 @@ export const logout = () => {
 // function writeDialog() {
 //   const data = {
 //     dialogId: dialogId,
-//     status: 'active',
+//     status: 'queue',
 //     lastActivity: 123,
 //     lastMessage: 'qweqweqwe',
 //     clientName: 'Гоша',
