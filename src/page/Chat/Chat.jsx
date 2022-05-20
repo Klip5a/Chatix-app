@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  ref,
-  set,
-  get,
-  query,
-  onValue,
-  serverTimestamp
-} from 'firebase/database';
+import moment from 'moment';
+import 'moment/locale/ru';
+import { ref, set, get, query, onValue, update } from 'firebase/database';
 
 import { database } from '../../api/firebase';
 import { logOut } from '../../store/actions/actions';
 import styles from './Chat.module.scss';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import profileImg from '../../assets/7819_Coll_Pepega.png';
+import MessageForm from '../../components/MessageForm/MessageForm';
 
 const Chat = () => {
   const { user } = useSelector(({ auth }) => auth);
@@ -25,13 +21,15 @@ const Chat = () => {
   const [text, setText] = useState('');
   const operatorId = user.uid;
 
-  function handleLogout() {
-    dispatch(logOut());
-  }
+  moment.locale('ru');
 
   useEffect(() => {
     viewOperator();
-  }, []);
+  }, [message, dialog]);
+
+  function handleLogout() {
+    dispatch(logOut());
+  }
 
   const viewOperator = async () => {
     const operatorRef = ref(database, 'operators/' + user.uid);
@@ -56,15 +54,19 @@ const Chat = () => {
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
-    setText(event.target.value);
     const msgArr = Object.keys(message);
     const id = msgArr.length + 1;
     const data = {
       writtenBy: 'operator',
       content: text,
-      timestamp: serverTimestamp(new Date())
+      timestamp: moment().format()
     };
-    await set(ref(database, 'messages/' + dialog.dialogId + id), data);
+    await update(ref(database, 'dialogs/' + dialog.dialogId), {
+      lastMessage: text,
+      lastActivity: moment().format()
+    });
+    await set(ref(database, 'messages/' + dialog.dialogId + `/${id}`), data);
+    setText('');
   };
 
   return (
@@ -95,7 +97,7 @@ const Chat = () => {
             </button>
           </div>
         </div>
-        <div className={styles['chat-message']}>
+        <div className={styles['dialog-wrapper']}>
           {showMessage ? (
             <div className={styles['messages-wrapper']}>
               {Object.keys(message).map((id) => {
@@ -120,25 +122,15 @@ const Chat = () => {
                       </div>
                       <p className={styles['text']}>{message[id].content}</p>
                       <div className={styles['time-message']}>
-                        {message[id].timestamp}
+                        {moment(message[id].timestamp).format('LTS')}
                       </div>
                     </div>
                     {dialog.status === 'active' ? (
-                      <div>
-                        <form
-                          className={styles['send-message']}
-                          onSubmit={handleSendMessage}
-                        >
-                          <input
-                            type="text"
-                            placeholder="Сообщение"
-                            value={text}
-                          />
-                          <button>
-                            <i className="fa-solid fa-plus"></i>
-                          </button>
-                        </form>
-                      </div>
+                      <MessageForm
+                        handleSendMessage={handleSendMessage}
+                        text={text}
+                        setText={setText}
+                      />
                     ) : null}
                   </>
                 );

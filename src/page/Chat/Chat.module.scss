@@ -54,7 +54,7 @@ body {
     }
   }
 
-  .chat-message {
+  .dialog-wrapper {
     width: 100%;
     height: calc(100% - 130px);
     box-shadow: inset 0px 0px 4px -2px #000000;
@@ -71,7 +71,7 @@ body {
 
       .message {
         max-width: 80%;
-        min-width: 40%;
+        min-width: 50%;
         position: relative;
         padding: 40px 10px 10px 10px;
         margin-bottom: 10px;

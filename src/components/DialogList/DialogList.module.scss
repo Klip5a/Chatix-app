@@ -74,6 +74,7 @@
       display: none;
       overflow: auto;
       .user-item {
+        overflow: hidden;
         position: relative;
         height: 75px;
         margin: 10px 0 10px 10px;
