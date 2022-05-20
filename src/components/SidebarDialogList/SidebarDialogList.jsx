@@ -1,23 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import {
-  ref,
-  get,
-  query,
-  startAt,
-  orderByChild,
-  endAt,
-  onValue,
-  onChildAdded,
-  equalTo,
-  update
-} from 'firebase/database';
+import { ref, get, query, update } from 'firebase/database';
 
-import styles from './DialogList.module.scss';
+import styles from './SidebarDialogList.module.scss';
 import { database } from '../../api/firebase';
 
-export const DialogList = (props) => {
+const SidebarDialogList = (props) => {
   const [accordionActiveDialog, setAccordionActiveDialog] = useState(false);
   const [accordionCompletedDialog, setAccordionCompletedDialog] =
     useState(false);
@@ -160,6 +149,7 @@ export const DialogList = (props) => {
       })
     );
   };
+
   return (
     <div className={styles['dialogs-wrapper']}>
       {/* Активные */}
@@ -212,9 +202,7 @@ export const DialogList = (props) => {
                         {dialog[uid].lastMessage}
                       </div>
                       <div className={styles['dispatch-time']}>
-                        {moment(dialog[uid].lastActivity)
-                          .startOf('hour')
-                          .fromNow()}
+                        {moment(dialog[uid].lastActivity).calendar()}
                       </div>
                     </div>
                   </li>
@@ -353,13 +341,13 @@ export const DialogList = (props) => {
   );
 };
 
-DialogList.propTypes = {
+SidebarDialogList.propTypes = {
   dialogId: PropTypes.string,
   selectDialog: PropTypes.func.isRequired
 };
 
-DialogList.defaultProps = {
+SidebarDialogList.defaultProps = {
   selectDialog() {}
 };
 
-export default DialogList;
+export default SidebarDialogList;

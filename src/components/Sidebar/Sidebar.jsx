@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import styles from './Sidebar.module.scss';
-import DialogList from '../DialogList/DialogList';
+import DialogList from '../SidebarDialogList/SidebarDialogList';
 import SearchInput from '../SearchInput/SearchInpit';
 
 const Sidebar = (props) => {

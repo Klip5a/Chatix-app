@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import 'moment/locale/ru';
 import { ref, set, get, query, onValue, update } from 'firebase/database';
+import InfiniteScroll from 'react-infinite-scroller';
 
 import { database } from '../../api/firebase';
 import { logOut } from '../../store/actions/actions';
@@ -10,6 +11,8 @@ import styles from './Chat.module.scss';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import profileImg from '../../assets/7819_Coll_Pepega.png';
 import MessageForm from '../../components/MessageForm/MessageForm';
+import Message from '../../components/Message/Message';
+import { toast } from 'react-toastify';
 
 const Chat = () => {
   const { user } = useSelector(({ auth }) => auth);
@@ -25,7 +28,7 @@ const Chat = () => {
 
   useEffect(() => {
     viewOperator();
-  }, [message, dialog]);
+  }, []);
 
   function handleLogout() {
     dispatch(logOut());
@@ -52,8 +55,26 @@ const Chat = () => {
     });
   };
 
+  const fetchDialog = async () => {
+    const msgRef = query(ref(database, 'messages/' + dialog.dialogId));
+
+    get(msgRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        setMessage({ ...snapshot.val() });
+      } else {
+        console.log('No data available');
+      }
+    });
+  };
+
   const handleSendMessage = async (event) => {
     event.preventDefault();
+
+    if (text == '' || text.length == 0) {
+      toast.warning('Введите что-нибудь...');
+      return false;
+    }
+
     const msgArr = Object.keys(message);
     const id = msgArr.length + 1;
     const data = {
@@ -89,52 +110,45 @@ const Chat = () => {
         <div className={styles['counter-search__wrapper']}>
           <div className={styles['client-queue']}>
             Клиентов в очереди: <span>10</span>
+          </div>
+          {showMessage ? (
             <button
-              className="bg-red-500 text-white ml-10"
+              className="bg-blue-100 text-black p-2 rounded-xl"
               onClick={() => setShowMessage(false)}
             >
-              close dialog
+              Закрыть диалог
             </button>
-          </div>
+          ) : null}
         </div>
         <div className={styles['dialog-wrapper']}>
           {showMessage ? (
             <div className={styles['messages-wrapper']}>
-              {Object.keys(message).map((id) => {
-                return (
-                  <>
-                    <div
-                      className={
-                        styles['message'] +
-                        ' ' +
-                        `${
-                          message[id].writtenBy === 'client'
-                            ? styles['message-client']
-                            : styles['message-operator']
-                        }`
-                      }
+              <InfiniteScroll
+                loadMore={fetchDialog}
+                hasMore={true}
+                className={styles['inf-scroller']}
+                useWindow={false}
+              >
+                {Object.keys(message).map((id) => {
+                  return (
+                    <Message
                       key={id}
-                    >
-                      <div className={styles['username']}>
-                        {message[id].writtenBy === 'client'
-                          ? `Клиент ${dialog.clientName}`
-                          : `Оператор ${operator.name}`}
-                      </div>
-                      <p className={styles['text']}>{message[id].content}</p>
-                      <div className={styles['time-message']}>
-                        {moment(message[id].timestamp).format('LTS')}
-                      </div>
-                    </div>
-                    {dialog.status === 'active' ? (
-                      <MessageForm
-                        handleSendMessage={handleSendMessage}
-                        text={text}
-                        setText={setText}
-                      />
-                    ) : null}
-                  </>
-                );
-              })}
+                      clientName={dialog.clientName}
+                      operatorName={operator.name}
+                      writtenBy={message[id].writtenBy}
+                      content={message[id].content}
+                      timestamp={message[id].timestamp}
+                    />
+                  );
+                })}
+              </InfiniteScroll>
+              {dialog.status === 'active' ? (
+                <MessageForm
+                  handleSendMessage={handleSendMessage}
+                  text={text}
+                  setText={setText}
+                />
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -142,9 +156,5 @@ const Chat = () => {
     </div>
   );
 };
-
-// Chat.propTypes = {
-//   operatorId: PropTypes.string.isRequired
-// };
 
 export default Chat;
