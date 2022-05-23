@@ -2,9 +2,9 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import ProtectedRoute from './components/ProtectedRoute';
-import SignIn from './components/SignIn/SignIn';
-import SignUp from './components/SignUp/SignUp';
-import Chat from './components/Chat/Chat';
+import SignIn from './page/SignIn/SignIn';
+import SignUp from './page/SignUp/SignUp';
+import Chat from './page/Chat/Chat';
 
 const App = () => {
   return (
