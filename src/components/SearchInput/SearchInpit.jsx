@@ -49,7 +49,6 @@ const SearchInput = ({ setShow, setQuery }) => {
     const searchTerm = event.target.value;
 
     if (searchTerm !== '') {
-      // console.log('searchTerm: ', searchTerm);
       const newContactList = Object.values(messagesData).filter((message) =>
         message.content.toLowerCase().includes(searchTerm.toLowerCase())
       );
