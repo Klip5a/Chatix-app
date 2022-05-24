@@ -1,12 +1,14 @@
 .dialog-queue__wrapper {
   padding: 20px 10px;
-  overflow-y: auto;
+  overflow: auto;
+  height: 100%;
   .dialog-item {
     background-color: #fff;
     position: relative;
     border-radius: 20px;
     padding: 10px;
     margin-bottom: 20px;
+    max-width: 500px;
     .dialog-info {
       padding-bottom: 30px;
       display: flex;

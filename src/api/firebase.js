@@ -68,7 +68,7 @@ export const socialSignIn = async (provider) => {
 //     profile_picture : imageUrl
 //   });
 // }
-export const signUp = async ({ email, password, username, dateOfBirth }) => {
+export const signUp = async ({ email, password, username }) => {
   try {
     const { user } = await createUserWithEmailAndPassword(
       auth,
@@ -79,8 +79,7 @@ export const signUp = async ({ email, password, username, dateOfBirth }) => {
     const userData = await set(ref(database, 'operators/' + user.uid), {
       operatopId: user.uid,
       email: email,
-      username: username,
-      dateOfBirth: dateOfBirth
+      username: username
     });
 
     return userData;

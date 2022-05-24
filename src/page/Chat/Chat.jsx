@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
-import 'moment/locale/ru';
+//
 import { ref, set, get, query, onValue, update } from 'firebase/database';
 import InfiniteScroll from 'react-infinite-scroller';
+import moment from 'moment';
+import 'moment/locale/ru';
+import { toast } from 'react-toastify';
 
 import { database } from '../../api/firebase';
-import { logOut } from '../../store/actions/actions';
 import styles from './Chat.module.scss';
-import Sidebar from '../../components/Sidebar/Sidebar';
 import profileImg from '../../assets/7819_Coll_Pepega.png';
+import Sidebar from '../../components/Sidebar/Sidebar';
 import MessageForm from '../../components/MessageForm/MessageForm';
 import Message from '../../components/Message/Message';
-import { toast } from 'react-toastify';
 import DialogListQueue from '../../components/DialogListQueue/DialogListQueue';
+// Redux
+import { logOut } from '../../store/actions/actions';
 
 const Chat = () => {
   const { user } = useSelector(({ auth }) => auth);
@@ -24,13 +26,17 @@ const Chat = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [countQueueDialog, setCountQueueDialog] = useState([]);
   const [text, setText] = useState('');
+  const [statusDialog, setStatusDialog] = useState({});
+
   const operatorId = user.uid;
 
   moment.locale('ru');
 
   useEffect(() => {
     viewOperator();
-  }, []);
+    alertSwapStatusDialog();
+    fetchDialog();
+  }, [message, countQueueDialog, dialog]);
 
   function handleLogout() {
     dispatch(logOut());
@@ -47,13 +53,15 @@ const Chat = () => {
     setDialog(dialogData);
     setShowMessage(true);
     const msgRef = query(ref(database, 'messages/' + dialogData.dialogId));
-
     get(msgRef).then((snapshot) => {
-      if (snapshot.exists()) {
-        setMessage({ ...snapshot.val() });
-      } else {
-        console.log('No data available');
-      }
+      setMessage(snapshot.val());
+    });
+  };
+
+  const alertSwapStatusDialog = () => {
+    const queryDialog = query(ref(database, 'dialogs/' + dialog.dialogId));
+    get(queryDialog).then((snapshot) => {
+      setStatusDialog(snapshot.val());
     });
   };
 
@@ -72,7 +80,7 @@ const Chat = () => {
   const handleSendMessage = async (event) => {
     event.preventDefault();
 
-    if (text == '' || text.length == 0) {
+    if (!text || !text.length) {
       toast.warning('Введите что-нибудь...');
       return false;
     }
@@ -112,17 +120,16 @@ const Chat = () => {
         <div className={styles['counter-search__wrapper']}>
           {!showMessage ? (
             <div className={styles['client-queue']}>
-              Клиентов в очереди: <span>{countQueueDialog.length}</span>
+              Клиентов в очереди: <span>{countQueueDialog}</span>
             </div>
-          ) : null}
-          {showMessage ? (
+          ) : (
             <button
               className="bg-blue-100 text-black p-2 rounded-xl w-full"
               onClick={() => setShowMessage(false)}
             >
               Закрыть диалог
             </button>
-          ) : null}
+          )}
         </div>
         <div className={styles['dialog-wrapper']}>
           {showMessage ? (
@@ -131,7 +138,6 @@ const Chat = () => {
                 loadMore={fetchDialog}
                 hasMore={true}
                 className={styles['inf-scroller']}
-                useWindow={false}
               >
                 {Object.keys(message).map((id) => {
                   return (
@@ -150,8 +156,11 @@ const Chat = () => {
                   handleSendMessage={handleSendMessage}
                   text={text}
                   setText={setText}
+                  operatorId={operatorId}
                 />
-              ) : null}
+              ) : (
+                'Диалог завершился'
+              )}
             </div>
           ) : (
             <DialogListQueue

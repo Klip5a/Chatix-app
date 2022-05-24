@@ -9,7 +9,8 @@ const Message = ({ writtenBy, clientName, content, timestamp }) => {
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [content]);
+  }, []);
+
   return (
     <div
       className={
