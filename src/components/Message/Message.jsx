@@ -29,7 +29,7 @@ const Message = ({ writtenBy, clientName, content, timestamp }) => {
       </div>
       <p className={styles['text']}>{content}</p>
       <div className={styles['time-message']}>
-        {moment(timestamp).format('LTS')}
+        {moment(new Date(timestamp)).format('LTS')}
       </div>
     </div>
   );
