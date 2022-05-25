@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 //
 import { get, query, ref } from 'firebase/database';
+import debounce from 'lodash.debounce';
 
 import styles from '../../page/Chat/Chat.module.scss';
 import { database } from '../../api/firebase';
@@ -25,7 +26,10 @@ const MessageForm = ({ handleSendMessage, text, setText, operatorId }) => {
             (el) => el.toLowerCase().indexOf(query.toLowerCase()) !== -1
           );
         };
-        setPhraseSheet(filterPhrase(arrData, text));
+        const debounceAutocomplete = debounce(() =>
+          setPhraseSheet(filterPhrase(arrData, text), 2000)
+        );
+        debounceAutocomplete();
       })
       .catch((err) => console.log(err));
   };
