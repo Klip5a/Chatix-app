@@ -26,17 +26,16 @@ const Chat = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [countQueueDialog, setCountQueueDialog] = useState([]);
   const [text, setText] = useState('');
-  const [statusDialog, setStatusDialog] = useState({});
-
+  const [dialogStatus, setDialogStatus] = useState('');
   const operatorId = user.uid;
 
   moment.locale('ru');
 
   useEffect(() => {
     viewOperator();
-    alertSwapStatusDialog();
     fetchDialog();
-  }, [message, countQueueDialog, dialog]);
+    fetchingStatusDialog();
+  }, [countQueueDialog, dialog, dialogStatus]);
 
   function handleLogout() {
     dispatch(logOut());
@@ -49,6 +48,16 @@ const Chat = () => {
     });
   };
 
+  const fetchingStatusDialog = async () => {
+    const dialogRef = query(ref(database, 'dialogs/' + dialog.dialogId));
+    get(dialogRef).then((snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setDialogStatus(data.status);
+      }
+    });
+  };
+
   const selectDialog = async (dialogData) => {
     setDialog(dialogData);
     setShowMessage(true);
@@ -58,21 +67,11 @@ const Chat = () => {
     });
   };
 
-  const alertSwapStatusDialog = () => {
-    const queryDialog = query(ref(database, 'dialogs/' + dialog.dialogId));
-    get(queryDialog).then((snapshot) => {
-      setStatusDialog(snapshot.val());
-    });
-  };
-
   const fetchDialog = async () => {
     const msgRef = query(ref(database, 'messages/' + dialog.dialogId));
-
     get(msgRef).then((snapshot) => {
       if (snapshot.exists()) {
         setMessage({ ...snapshot.val() });
-      } else {
-        console.log('No data available');
       }
     });
   };
@@ -146,12 +145,12 @@ const Chat = () => {
                       clientName={dialog.clientName}
                       writtenBy={message[id].writtenBy}
                       content={message[id].content}
-                      timestamp={message[id].timestamp}
+                      timestamp={message[id].timestamp.toString()}
                     />
                   );
                 })}
               </InfiniteScroll>
-              {dialog.status === 'active' ? (
+              {dialogStatus === 'active' ? (
                 <MessageForm
                   handleSendMessage={handleSendMessage}
                   text={text}
@@ -159,7 +158,9 @@ const Chat = () => {
                   operatorId={operatorId}
                 />
               ) : (
-                'Диалог завершился'
+                <div className={styles['disabled-message']}>
+                  <span>{dialog.clientName + ' завершил диалог'}</span>
+                </div>
               )}
             </div>
           ) : (
