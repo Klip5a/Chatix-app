@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import debounce from 'lodash.debounce';
 
 import styles from './SearchInput.module.scss';
+import { get, orderByChild, query, ref } from 'firebase/database';
+import { database } from '../../api/firebase';
 
 const SearchInput = ({ setShow, setQuery }) => {
   const messagesData = [
@@ -52,6 +54,26 @@ const SearchInput = ({ setShow, setQuery }) => {
       const newContactList = Object.values(messagesData).filter((message) =>
         message.content.toLowerCase().includes(searchTerm.toLowerCase())
       );
+      // const msgRef = query(ref(database, 'messages/'), orderByChild('content'));
+      // get(msgRef).then((snapshot) => {
+      //   snapshot.forEach((childSnapshot) => {
+      //     childSnapshot.forEach((childChildSnapshot) => {
+      //       // const data = childChildSnapshot.val();
+      //       const content = Object.values(childChildSnapshot);
+      //       console.log(content);
+      //       const filterSearch = (arr, query) => {
+      //         // console.log(arr)
+      //         return arr.filter(
+      //           (el) => (el).toLowerCase().indexOf(query.toLowerCase()) !== -1
+      //         );
+      //       };
+      //       // setQuery(filterSearch(content, searchTerm));
+      //       console.log(filterSearch(content, searchTerm));
+      //     });
+      //   });
+      //
+      // ;
+      // });
       const debounceSearch = debounce(() => setQuery(newContactList), 500);
       debounceSearch();
       setShow(false); // dialog list hidden
