@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 //
+import Picker from 'emoji-picker-react';
 import { get, query, ref } from 'firebase/database';
 import debounce from 'lodash.debounce';
 
@@ -10,6 +11,7 @@ import { database } from '../../api/firebase';
 const MessageForm = ({ handleSendMessage, text, setText, operatorId }) => {
   const [phraseSheet, setPhraseSheet] = useState([]);
   const [isOpen, setIsOpen] = useState(true);
+  const [showPicker, setShowPicker] = useState(false);
 
   useEffect(() => {
     phraseSheetList();
@@ -43,15 +45,29 @@ const MessageForm = ({ handleSendMessage, text, setText, operatorId }) => {
     setIsOpen(true);
   };
 
+  const onEmojiClick = (event, emojiObject) => {
+    setText((prevText) => prevText + emojiObject.emoji);
+  };
+
   return (
     <form className={styles['send-message']} onSubmit={handleSendMessage}>
       <div className={styles['input-message__wrapper']}>
+        {showPicker && (
+          <Picker
+            onEmojiClick={onEmojiClick}
+            pickerStyle={{ width: '400px', marginLeft: '5px' }}
+          />
+        )}
         <input
           type="text"
           placeholder="Сообщение"
           value={text}
           onChange={(event) => setText(event.target.value)}
           onClick={inputClickHandler}
+        />
+        <img
+          className={styles['emoji-icon']}
+          onClick={() => setShowPicker((val) => !val)}
         />
         <ul className={styles['autocomplete']}>
           {text && isOpen
@@ -66,7 +82,7 @@ const MessageForm = ({ handleSendMessage, text, setText, operatorId }) => {
         </ul>
       </div>
 
-      <button>
+      <button className={styles['btn-phrase']}>
         <i className="fa-solid fa-plus"></i>
       </button>
     </form>
