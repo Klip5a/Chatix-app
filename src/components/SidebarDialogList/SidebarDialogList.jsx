@@ -187,7 +187,7 @@ const SidebarDialogList = (props) => {
                         {dialog[uid].lastMessage}
                       </div>
                       <div className={styles['dispatch-time']}>
-                        {dialog[uid].lastActivity}
+                        {moment(dialog[uid].lastActivity).calendar()}
                       </div>
                     </div>
                     <button
@@ -248,7 +248,7 @@ const SidebarDialogList = (props) => {
                         {dialog[uid].lastMessage}
                       </div>
                       <div className={styles['dispatch-time']}>
-                        {dialog[uid].lastActivity}
+                        {moment(dialog[uid].lastActivity).calendar()}
                       </div>
                     </div>
                     <button className={styles['btn-delete']}>
