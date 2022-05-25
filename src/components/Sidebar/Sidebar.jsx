@@ -9,6 +9,7 @@ const Sidebar = (props) => {
   const [show, setShow] = useState(true);
   const [foundMessage, setFoundMessage] = useState({});
   const { dialogData, operatorId } = props;
+
   return (
     <div className={styles['left-sidebar__wrapper']}>
       <div className={styles['logo-wrapper']}>
