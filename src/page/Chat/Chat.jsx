@@ -1,40 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+//
+import { ref, set, get, query, onValue, update } from 'firebase/database';
+import {
+  getDownloadURL,
+  uploadBytes,
+  ref as ref_storage
+} from 'firebase/storage';
+import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
 import 'moment/locale/ru';
-import { ref, set, get, query, onValue, update } from 'firebase/database';
-import InfiniteScroll from 'react-infinite-scroller';
+import { usePubNub } from 'pubnub-react';
 
-import { database } from '../../api/firebase';
-import { logOut } from '../../store/actions/actions';
+import { database, storage } from '../../api/firebase';
+// styles
 import styles from './Chat.module.scss';
+// components
 import Sidebar from '../../components/Sidebar/Sidebar';
-import profileImg from '../../assets/7819_Coll_Pepega.png';
 import MessageForm from '../../components/MessageForm/MessageForm';
 import Message from '../../components/Message/Message';
-import { toast } from 'react-toastify';
 import DialogListQueue from '../../components/DialogListQueue/DialogListQueue';
 
+// Redux
+import ChatHeader from '../../components/ChatHeader/ChatHeader';
+
 const Chat = () => {
+  const pubnub = usePubNub();
   const { user } = useSelector(({ auth }) => auth);
-  const dispatch = useDispatch();
   const [dialog, setDialog] = useState({});
+  const [img, setImg] = useState('');
   const [message, setMessage] = useState([]);
   const [operator, setOperator] = useState({});
+  const [text, setText] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [countQueueDialog, setCountQueueDialog] = useState([]);
-  const [text, setText] = useState('');
+  const [dialogStatus, setDialogStatus] = useState('');
+  const [indicatorMessage, setIndicatorMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const operatorId = user.uid;
 
   moment.locale('ru');
 
   useEffect(() => {
     viewOperator();
-  }, []);
-
-  function handleLogout() {
-    dispatch(logOut());
-  }
+    fetchDialog();
+    fetchingStatusDialog();
+    typingMegase();
+  }, [countQueueDialog, dialog, indicatorMessage]);
 
   const viewOperator = async () => {
     const operatorRef = ref(database, 'operators/' + user.uid);
@@ -43,28 +55,34 @@ const Chat = () => {
     });
   };
 
+  const fetchingStatusDialog = async () => {
+    const dialogRef = query(ref(database, 'dialogs/' + dialog.dialogId));
+    get(dialogRef)
+      .then((snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          setDialogStatus(data.status);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   const selectDialog = async (dialogData) => {
     setDialog(dialogData);
     setShowMessage(true);
     const msgRef = query(ref(database, 'messages/' + dialogData.dialogId));
-
     get(msgRef).then((snapshot) => {
-      if (snapshot.exists()) {
-        setMessage({ ...snapshot.val() });
-      } else {
-        console.log('No data available');
-      }
+      setMessage(snapshot.val());
     });
   };
 
   const fetchDialog = async () => {
     const msgRef = query(ref(database, 'messages/' + dialog.dialogId));
-
     get(msgRef).then((snapshot) => {
       if (snapshot.exists()) {
         setMessage({ ...snapshot.val() });
-      } else {
-        console.log('No data available');
       }
     });
   };
@@ -72,16 +90,27 @@ const Chat = () => {
   const handleSendMessage = async (event) => {
     event.preventDefault();
 
-    if (text == '' || text.length == 0) {
+    if (!text || !text.length) {
       toast.warning('Введите что-нибудь...');
       return false;
     }
 
+    let url;
+    if (img) {
+      const imgRef = ref_storage(storage, `images/${img.name}`);
+      const snap = await uploadBytes(imgRef, img);
+      const dlUrl = await getDownloadURL(
+        ref_storage(storage, snap.ref.fullPath)
+      );
+      url = dlUrl;
+    }
+
     const msgArr = Object.keys(message);
-    const id = msgArr.length + 1;
+    const id = msgArr.length;
     const data = {
       writtenBy: 'operator',
       content: text,
+      media: url || '',
       timestamp: moment().format()
     };
     await update(ref(database, 'dialogs/' + dialog.dialogId), {
@@ -89,40 +118,40 @@ const Chat = () => {
       lastActivity: moment().format()
     });
     await set(ref(database, 'messages/' + dialog.dialogId + `/${id}`), data);
+
     setText('');
+    setImg('');
+  };
+
+  const typingMegase = () => {
+    const inputHasText = indicatorMessage.length > 0;
+    if ((inputHasText && isTyping) || (!inputHasText && !isTyping)) {
+      setIsTyping(!isTyping);
+      pubnub.signal({
+        channel: 'is-typing',
+        message: inputHasText ? '1' : '0'
+      });
+    }
   };
 
   return (
     <div className={styles['container']}>
       <Sidebar dialogData={selectDialog} operatorId={operatorId} />
       <div className={styles['chat-wrapper']}>
-        <div className={styles['chat-header']}>
-          <button
-            className="bg-blue-600 h-10 text-white rounded-md text-xl"
-            type="submit"
-            onClick={handleLogout}
-          >
-            Log Out
-          </button>
-          <div className={styles['profile']}>
-            <span className={styles['profile-email']}>{user.email}</span>
-            <img src={profileImg} alt="Pepega.png" />
-          </div>
-        </div>
+        <ChatHeader operator={operator} />
         <div className={styles['counter-search__wrapper']}>
           {!showMessage ? (
             <div className={styles['client-queue']}>
-              Клиентов в очереди: <span>{countQueueDialog.length}</span>
+              Клиентов в очереди: <span>{countQueueDialog}</span>
             </div>
-          ) : null}
-          {showMessage ? (
+          ) : (
             <button
               className="bg-blue-100 text-black p-2 rounded-xl w-full"
               onClick={() => setShowMessage(false)}
             >
               Закрыть диалог
             </button>
-          ) : null}
+          )}
         </div>
         <div className={styles['dialog-wrapper']}>
           {showMessage ? (
@@ -131,27 +160,34 @@ const Chat = () => {
                 loadMore={fetchDialog}
                 hasMore={true}
                 className={styles['inf-scroller']}
-                useWindow={false}
               >
-                {Object.keys(message).map((id) => {
+                {Object.keys(message).map((id, index) => {
                   return (
                     <Message
                       key={id}
+                      index={index}
+                      dialog={dialog}
                       clientName={dialog.clientName}
-                      writtenBy={message[id].writtenBy}
-                      content={message[id].content}
-                      timestamp={message[id].timestamp}
+                      message={message[id]}
                     />
                   );
                 })}
+                {!isTyping ? <div>message is typing</div> : null}
               </InfiniteScroll>
-              {dialog.status === 'active' ? (
+              {dialogStatus === 'active' ? (
                 <MessageForm
                   handleSendMessage={handleSendMessage}
                   text={text}
                   setText={setText}
+                  setImg={setImg}
+                  operator={operator}
+                  setIndicatorMessage={setIndicatorMessage}
                 />
-              ) : null}
+              ) : (
+                <div className={styles['disabled-message']}>
+                  <span>{dialog.clientName + ' завершил диалог'}</span>
+                </div>
+              )}
             </div>
           ) : (
             <DialogListQueue

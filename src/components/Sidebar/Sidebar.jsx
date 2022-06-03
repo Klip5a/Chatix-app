@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import styles from './Sidebar.module.scss';
-import DialogList from '../SidebarDialogList/SidebarDialogList';
+import SidebarDialogList from '../SidebarDialogList/SidebarDialogList';
 import SearchInput from '../SearchInput/SearchInpit';
 
 const Sidebar = (props) => {
   const [show, setShow] = useState(true);
   const [foundMessage, setFoundMessage] = useState({});
   const { dialogData, operatorId } = props;
+
   return (
     <div className={styles['left-sidebar__wrapper']}>
       <div className={styles['logo-wrapper']}>
@@ -18,7 +19,7 @@ const Sidebar = (props) => {
       <SearchInput setShow={setShow} setQuery={setFoundMessage} />
 
       {show ? (
-        <DialogList selectDialog={dialogData} operatorId={operatorId} />
+        <SidebarDialogList selectDialog={dialogData} operatorId={operatorId} />
       ) : (
         <div className={styles['search-wrapper']}>
           <ul className={styles['search-list-dialog']}>

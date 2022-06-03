@@ -26,8 +26,7 @@ const SignUp = () => {
         '^[a-zA-Z][a-zA-Z0-9-_\\.]{1,20}$',
         'Латинские буквы и цифры, от 2 до 20 символов, первый символ обязательно буква'
       )
-      .required('Введите имя'),
-    dateOfBirth: Yup.date().required('Введите дату рождения')
+      .required('Введите имя')
   });
 
   return (
@@ -44,8 +43,7 @@ const SignUp = () => {
             initialValues={{
               email: '',
               username: '',
-              password: '',
-              dateOfBirth: ''
+              password: ''
             }}
             validationSchema={DisplayingErrorMessagesSchema}
             onSubmit={(values) => {
@@ -93,16 +91,6 @@ const SignUp = () => {
                     <label htmlFor="password">Пароль</label>
                   )}
                   <Field id="password" name="password" type="password" />
-                </div>
-                <div className="mt-7">
-                  {errors.dateOfBirth && touched.dateOfBirth ? (
-                    <label htmlFor="dateOfBirth" className="text-red-600">
-                      {errors.dateOfBirth}
-                    </label>
-                  ) : (
-                    <label htmlFor="dateOfBirth">Дата рождения</label>
-                  )}
-                  <Field id="dateOfBirth" name="dateOfBirth" type="date" />
                 </div>
                 <button type="submit">Зарегистрироваться</button>
                 <div className="mt-1 text-sm">

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   ref,
   get,
@@ -14,6 +15,7 @@ import { toast } from 'react-toastify';
 
 const DialogListQueue = ({ operatorId, setCountQueueDialog }) => {
   const [dialogQueue, setDialogQueue] = useState({});
+  const [dialogListView, setDialogListView] = useState(true);
 
   useEffect(() => {
     getDialogQueue();
@@ -27,9 +29,13 @@ const DialogListQueue = ({ operatorId, setCountQueueDialog }) => {
     );
     get(queryDialog).then((snapshot) => {
       if (snapshot.exists()) {
-        setDialogQueue({ ...snapshot.val() });
+        setDialogQueue(snapshot.val());
         const arrData = Object.keys(snapshot.val());
-        setCountQueueDialog(arrData);
+        setCountQueueDialog(arrData.length);
+        setDialogListView(true);
+      } else {
+        setDialogListView(!dialogListView);
+        setCountQueueDialog(0);
       }
     });
   };
@@ -53,44 +59,50 @@ const DialogListQueue = ({ operatorId, setCountQueueDialog }) => {
 
   return (
     <div className={styles['dialog-queue__wrapper']}>
-      {Object.keys(dialogQueue).map((uid, index) => {
-        return (
-          <div className={styles['dialog-item']} key={uid}>
-            <div className={styles['dialog-info']}>
-              <div className={styles['queue-number']}>
-                <span>{index + 1}</span>
+      {dialogListView
+        ? Object.keys(dialogQueue).map((uid, index) => {
+            return (
+              <div className={styles['dialog-item']} key={uid}>
+                <div className={styles['dialog-info']}>
+                  <div className={styles['queue-number']}>
+                    <span>{index + 1}</span>
+                  </div>
+                  <div className={styles['left-info-dialog']}>
+                    <div className={styles['client-name']}>
+                      Имя: {dialogQueue[uid].clientName}
+                    </div>
+                    <div className={styles['theme-appeal']}>
+                      Tema: {dialogQueue[uid].themeOfTheAppeal}
+                    </div>
+                    <div className={styles['subtopic']}>
+                      Подтема: {dialogQueue[uid].subtopic}
+                    </div>
+                  </div>
+                  <div className={styles['right-info-dialog']}>
+                    <div className={styles['last-message']}>
+                      {dialogQueue[uid].lastMessage}
+                    </div>
+                    <div className={styles['circulation-time']}>
+                      <span>{dialogQueue[uid].lastActivity}</span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  className={styles['btn-enter-dialog']}
+                  onClick={() => takeDialog(dialogQueue[uid])}
+                >
+                  Войти в диалог
+                </button>
               </div>
-              <div className={styles['left-info-dialog']}>
-                <div className={styles['client-name']}>
-                  Имя: {dialogQueue[uid].clientName}
-                </div>
-                <div className={styles['theme-appeal']}>
-                  Tema: {dialogQueue[uid].themeOfTheAppeal}
-                </div>
-                <div className={styles['subtopic']}>
-                  Подтема: {dialogQueue[uid].subtopic}
-                </div>
-              </div>
-              <div className={styles['right-info-dialog']}>
-                <div className={styles['last-message']}>
-                  {dialogQueue[uid].lastMessage}
-                </div>
-                <div className={styles['circulation-time']}>
-                  <span>{dialogQueue[uid].lastActivity}</span>
-                </div>
-              </div>
-            </div>
-            <button
-              className={styles['btn-enter-dialog']}
-              onClick={() => takeDialog(dialogQueue[uid])}
-            >
-              Войти в диалог
-            </button>
-          </div>
-        );
-      })}
+            );
+          })
+        : 'нет клиентов в очереди'}
     </div>
   );
+};
+
+DialogListQueue.propTypes = {
+  setCountQueueDialog: PropTypes.func
 };
 
 export default DialogListQueue;

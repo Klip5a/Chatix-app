@@ -16,7 +16,8 @@
       border-radius: 10px;
       height: 60px;
       cursor: pointer;
-      @apply flex items-center justify-between;
+      position: relative;
+      @apply flex items-center;
 
       .dialog-item__logo {
         width: 50px;
@@ -32,6 +33,9 @@
       .dialog-item__title {
         font-size: 18px;
         font-weight: 500;
+        width: 100%;
+        position: absolute;
+        
       }
 
       .dialog-item__counter {
@@ -70,7 +74,7 @@
     .user-list {
       color: #000;
       margin-right: 10px;
-      max-height: 350px;
+      max-height: 400px;
       display: none;
       overflow: auto;
       .user-item {
