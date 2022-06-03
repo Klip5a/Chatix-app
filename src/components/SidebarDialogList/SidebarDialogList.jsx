@@ -29,11 +29,7 @@ const SidebarDialogList = (props) => {
   const getAllDialog = async () => {
     const queryDialog = query(ref(database, 'dialogs/'));
     get(queryDialog).then((snapshot) => {
-      if (snapshot.exists()) {
-        setDialog({ ...snapshot.val() });
-      } else {
-        console.log('No data available');
-      }
+      setDialog(snapshot.val());
     });
   };
 
@@ -129,7 +125,7 @@ const SidebarDialogList = (props) => {
                         {dialog[uid].clientName}
                       </div>
                       <div className={styles['message']}>
-                        {dialog[uid].lastMessage}
+                        {dialog[uid].lastMessage.substring(0, 35) + '...'}
                       </div>
                       <div className={styles['dispatch-time']}>
                         {moment(dialog[uid].lastActivity).calendar()}
@@ -184,7 +180,7 @@ const SidebarDialogList = (props) => {
                         {dialog[uid].clientName}
                       </div>
                       <div className={styles['message']}>
-                        {dialog[uid].lastMessage}
+                        {dialog[uid].lastMessage.substring(0, 35) + '...'}
                       </div>
                       <div className={styles['dispatch-time']}>
                         {moment(dialog[uid].lastActivity).calendar()}
@@ -245,7 +241,7 @@ const SidebarDialogList = (props) => {
                         {dialog[uid].clientName}
                       </div>
                       <div className={styles['message']}>
-                        {dialog[uid].lastMessage}
+                        {dialog[uid].lastMessage.substring(0, 35) + '...'}
                       </div>
                       <div className={styles['dispatch-time']}>
                         {moment(dialog[uid].lastActivity).calendar()}

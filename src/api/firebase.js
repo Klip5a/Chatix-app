@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
-// import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getDatabase, ref, set, onValue } from 'firebase/database';
 import { GoogleAuthProvider } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -28,46 +28,38 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 // const database = getFirestore(app);
 export const database = getDatabase(app);
+export const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
 
 const availabelProviders = {
   google: googleProvider
 };
 
-export const socialSignIn = async (provider) => {
-  try {
-    const res = await signInWithPopup(auth, availabelProviders[provider]);
-    const user = res.user;
-    const query = await database
-      .collection('users')
-      .where('uid', '==', user.uid)
-      .get();
-    let userData = query.docs[0]?.data();
-    if (query.docs.length === 0) {
-      const savedData = await database.collection('users').add({
-        uid: user.uid,
-        name: user.displayName,
-        authProvider: provider,
-        email: user.email
-      });
-      userData = (await savedData.get()).data();
-    }
-    return userData;
-  } catch (error) {
-    console.error(error);
-    throw err.message;
-  }
-};
-// import { getDatabase, ref, set } from "firebase/database";
+// export const socialSignIn = async (provider) => {
+//   try {
+//     const res = await signInWithPopup(auth, availabelProviders[provider]);
+//     const user = res.user;
+//     const query = await database
+//       .collection('users')
+//       .where('uid', '==', user.uid)
+//       .get();
+//     let userData = query.docs[0]?.data();
+//     if (query.docs.length === 0) {
+//       const savedData = await database.collection('users').add({
+//         uid: user.uid,
+//         name: user.displayName,
+//         authProvider: provider,
+//         email: user.email
+//       });
+//       userData = (await savedData.get()).data();
+//     }
+//     return userData;
+//   } catch (error) {
+//     console.error(error);
+//     throw err.message;
+//   }
+// };
 
-// function writeUserData(userId, name, email, imageUrl) {
-//   const db = getDatabase();
-//   set(ref(db, 'users/' + userId), {
-//     username: name,
-//     email: email,
-//     profile_picture : imageUrl
-//   });
-// }
 export const signUp = async ({ email, password, username }) => {
   try {
     const { user } = await createUserWithEmailAndPassword(
@@ -77,7 +69,7 @@ export const signUp = async ({ email, password, username }) => {
     );
 
     const userData = await set(ref(database, 'operators/' + user.uid), {
-      operatopId: user.uid,
+      operatorId: user.uid,
       email: email,
       username: username
     });
@@ -93,8 +85,6 @@ export const signIn = async ({ email, password }) => {
     const data = await signInWithEmailAndPassword(auth, email, password);
     return data;
   } catch (error) {
-    // console.log(error.message)
-
     throw toast.error('Ошибка почты или пароля', {
       position: 'top-center',
       autoClose: 5000,
@@ -104,35 +94,16 @@ export const signIn = async ({ email, password }) => {
       draggable: true,
       progress: undefined
     });
-    // throw errors.message;
   }
 };
 
 export const logout = () => {
   signOut(auth)
-    .then(() => {
-      // Sign-out successful.
-    })
+    .then(() => {})
     .catch((error) => {
       throw error.message;
     });
 };
-
-// export const getAllDialog = () => {
-//   try {
-//     const starCountRef = ref(database, 'dialogs/');
-//     onValue(starCountRef, (snapshot) => {
-//       const data = snapshot.val();
-//       if (data !== null) {
-//         Object.values(data).map((dialogs) => {
-
-//         })
-//       }
-//     });
-//   } catch (error) {
-//     throw error.message;
-//   }
-// };
 
 // const dialogId = uid();
 // function writeDialog() {

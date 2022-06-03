@@ -16,32 +16,6 @@ body {
   background: #fff;
   @apply shadow-2xl;
 
-  .chat-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 10px;
-    border-radius: 20px;
-    box-shadow: 0px 0px 4px -2px #000000;
-
-    .profile {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      .profile-email {
-        font-size: 28px;
-        font-weight: 600;
-        margin-right: 10px;
-      }
-      img {
-        border: 1px solid gray;
-        width: 49px;
-        height: 49px;
-        border-radius: 50%;
-      }
-    }
-  }
-
   .counter-search__wrapper {
     margin: 10px 0;
     height: 35px;
@@ -71,12 +45,17 @@ body {
       flex-direction: column;
       padding: 20px 10px;
       overflow: auto;
+      border-top: 1px solid #e2e2e2;
+      border-radius: 20px;
       .message {
         max-width: 80%;
         min-width: 50%;
         position: relative;
         padding: 40px 10px 10px 10px;
         margin-bottom: 10px;
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: column;
         .username {
           position: absolute;
           font-weight: 700;
@@ -90,6 +69,23 @@ body {
           right: 10px;
           color: #6e6e6e;
         }
+        .delete-message {
+          position: absolute;
+          top: 0;
+          left: -25px;
+          background-color: #ca5050;
+          color: #fff;
+          font-weight: 600;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 10px;
+        }
+      }
+      .active {
+        box-shadow: 0px 0px 4px 2px #2853c9;
       }
 
       .message-client {
@@ -104,6 +100,7 @@ body {
         border-radius: 10px 10px 0px 10px;
         @apply bg-blue-200;
       }
+
       .send-message {
         position: absolute;
         display: flex;
@@ -118,10 +115,10 @@ body {
           input {
             height: 40px;
             width: 100%;
-            border-bottom-left-radius: 20px;
-            padding: 0 20px;
+            padding: 0 80px 0 40px;
+            border-radius: 0 0 20px 20px;
             outline: none;
-            @apply border-l-2 border-b-2 border-solid border-blue-100;
+            @apply border-l-2 border-b-2 border-r-2 border-solid border-blue-100;
           }
           .autocomplete {
             background-color: #fff;
@@ -139,31 +136,37 @@ body {
               }
             }
           }
+          .paperclip-icon {
+            background-position: center;
+            position: absolute;
+            left: 10px;
+            bottom: 7px;
+            width: 25px;
+            height: 25px;
+          }
           .emoji-icon {
-            background: url(../../assets/emoji-smile.svg) no-repeat;
             background-position: center;
             width: 30px;
             height: 30px;
             position: absolute;
-            bottom: 4px;
-            right: 10px;
+            bottom: 5px;
+            right: 45px;
             border-radius: 15px;
             &:hover {
               box-shadow: 0px 0px 4px 1px #408fd8;
             }
           }
-        }
-
-        .btn-phrase {
-          width: 10%;
-          height: 40px;
-          color: #fff;
-          border-bottom-right-radius: 20px;
-          font-size: 24px;
-          font-weight: 600;
-          @apply bg-blue-400;
+          .phrase-icon {
+            background-position: center;
+            position: absolute;
+            right: 10px;
+            bottom: 5px;
+            width: 30px;
+            height: 30px;
+          }
         }
       }
+
       .disabled-message {
         position: absolute;
         display: flex;

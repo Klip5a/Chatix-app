@@ -16,11 +16,12 @@ import { toast } from 'react-toastify';
 const DialogListQueue = ({ operatorId, setCountQueueDialog }) => {
   const [dialogQueue, setDialogQueue] = useState({});
   const [dialogListView, setDialogListView] = useState(true);
+
   useEffect(() => {
     getDialogQueue();
   }, [dialogQueue]);
 
-  const getDialogQueue = () => {
+  const getDialogQueue = async () => {
     const queryDialog = query(
       ref(database, 'dialogs/'),
       orderByChild('status'),
@@ -28,10 +29,10 @@ const DialogListQueue = ({ operatorId, setCountQueueDialog }) => {
     );
     get(queryDialog).then((snapshot) => {
       if (snapshot.exists()) {
-        setDialogListView(true);
-        setDialogQueue({ ...snapshot.val() });
+        setDialogQueue(snapshot.val());
         const arrData = Object.keys(snapshot.val());
         setCountQueueDialog(arrData.length);
+        setDialogListView(true);
       } else {
         setDialogListView(!dialogListView);
         setCountQueueDialog(0);
@@ -55,6 +56,7 @@ const DialogListQueue = ({ operatorId, setCountQueueDialog }) => {
       })
     );
   };
+
   return (
     <div className={styles['dialog-queue__wrapper']}>
       {dialogListView
