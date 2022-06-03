@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   ref,
+  set,
   get,
   query,
   update,
@@ -12,10 +13,12 @@ import {
 import styles from './DialogListQueue.module.scss';
 import { database } from '../../api/firebase';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 
-const DialogListQueue = ({ operatorId, setCountQueueDialog }) => {
+const DialogListQueue = ({ operator, setCountQueueDialog }) => {
   const [dialogQueue, setDialogQueue] = useState({});
   const [dialogListView, setDialogListView] = useState(true);
+  const [message, setMessage] = useState([]);
 
   useEffect(() => {
     getDialogQueue();
@@ -41,9 +44,24 @@ const DialogListQueue = ({ operatorId, setCountQueueDialog }) => {
   };
 
   const takeDialog = async (event) => {
+    const msgRef = query(ref(database, 'messages/' + dialogQueue.dialogId));
+    get(msgRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        setMessage({ ...snapshot.val() });
+      }
+    });
+    const msgArr = Object.keys(message);
+    const id = msgArr.length;
+    const data = {
+      writtenBy: 'operator',
+      content: operator.automaticGreeting,
+      timestamp: moment().format()
+    };
+
     await update(ref(database, 'dialogs/' + event.dialogId), {
       status: 'active',
-      operatorId: operatorId
+      operatorId: operator.operatopId,
+      lastMessage: operator.automaticGreeting
     }).then(
       toast.success('🦄 Вы взяли диалог!', {
         position: 'bottom-right',
@@ -55,6 +73,7 @@ const DialogListQueue = ({ operatorId, setCountQueueDialog }) => {
         progress: undefined
       })
     );
+    await set(ref(database, 'messages/' + event.dialogId + `/${id}`), data);
   };
 
   return (

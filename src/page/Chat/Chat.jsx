@@ -191,7 +191,7 @@ const Chat = () => {
             </div>
           ) : (
             <DialogListQueue
-              operatorId={operatorId}
+              operator={operator}
               setCountQueueDialog={setCountQueueDialog}
             />
           )}
